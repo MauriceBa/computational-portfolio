@@ -426,7 +426,28 @@ no transpilation, targeting evergreen browsers.
 
 ## 9. Verification plan
 
-No test framework ships with the repo. Verification is manual and scripted, not automated CI:
+The shipped site has **zero runtime dependencies**. Automated tests use only Node's
+built-in `node:test` and `node:assert` (Node ≥ 18): no `package.json`, no `node_modules`,
+no install step, and nothing in `assets/` depends on them. This is the same
+"ad-hoc tooling, not a project dependency" rule as §10 applies to `html-validate`.
+Test files live in `tests/` and are never served.
+
+The rule that keeps this honest: **anything testable without a DOM must be a DOM-free
+pure function and lives in `main.js` behind a CommonJS export guard.** Pure logic is
+covered automatically; behaviour that genuinely requires a live DOM is verified by the
+manual pass below.
+
+### 9.1 Automated — `node --test tests/`
+
+| Test file | Function under test |
+| --- | --- |
+| `tests/theme.test.js` | `resolveTheme` |
+| `tests/mailto.test.js` | `buildMailtoUrl` |
+| `tests/filter.test.js` | `cardMatchesCategory` |
+| `tests/i18n.test.js` | `translateDocument`, plus a key-parity check over `I18N.en` / `I18N.fr` |
+| `tests/maintenance.test.js` | `index.html` well-formedness, every `data-i18n` key present in both dictionaries, every `data-category` covered by a filter button |
+
+### 9.2 Manual and tooling
 
 1. `npx html-validate` on the three HTML files — zero errors. Ad-hoc tooling only; see §10.
 2. Lighthouse against a local static server — Accessibility, SEO, Best Practices ≥ 95;
