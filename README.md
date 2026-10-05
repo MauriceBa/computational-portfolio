@@ -184,7 +184,6 @@ with no cards and shows an empty-state message; that is deliberate, and it is
 what proves the empty case works.
 
 ### 5. Legal pages
-
 `impressum.html` and `datenschutz.html` are **placeholders only**. They are
 structured to show what belongs where (DDG § 5, DSGVO articles), but they are not
 legal advice and they are not compliant as written.
@@ -210,7 +209,7 @@ assets/css/style.css    design tokens, layout, components, responsive rules
 assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
 assets/img/             placeholder project SVGs, favicon, og-image.png
-assets/pdf/             placeholder CV and publication PDFs
+assets/pdf/             placeholder PDFs: resume, thesis, report
 tests/                  Node built-in test runner; never served
 docs/superpowers/       the design spec and implementation plan
 ```
@@ -291,7 +290,9 @@ after editing content.
       `Select-String -Path *.html, assets/js/i18n.js -Pattern '\[[A-Za-z0-9<]'`
       (or `grep -rn "\[[A-Za-z0-9<]" *.html assets/js/i18n.js`) — it should report nothing
 - [ ] Name, email, and profile links updated everywhere (they appear in several places)
-- [ ] `assets/pdf/` holds your real CV and publications, not the placeholders
+- [ ] `assets/pdf/` holds your real CV, thesis and report — the three placeholder
+      files are `resume_placeholder.pdf`, `thesis_placeholder.pdf` and
+      `report_placeholder.pdf`
 - [ ] `assets/img/` holds real project screenshots
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true
