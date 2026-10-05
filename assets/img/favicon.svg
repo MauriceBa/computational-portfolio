@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Favicon placeholder">
+  <rect width="32" height="32" rx="7" fill="#0b1120"/>
+  <g fill="none" stroke="#60a5fa" stroke-width="1.6">
+    <path d="M6 22c4-10 8-14 10-14s6 4 10 14"/>
+    <path d="M9 26c3-7 5-10 7-10s4 3 7 10"/>
+  </g>
+  <circle cx="16" cy="9" r="2.4" fill="#60a5fa"/>
+</svg>

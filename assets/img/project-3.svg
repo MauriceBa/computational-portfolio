@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Project placeholder image">
+  <defs>
+    <pattern id="grid3" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#231a3d"/>
+  <rect width="800" height="450" fill="url(#grid3)"/>
+  <g fill="none" stroke="#a78bfa" stroke-opacity="0.55" stroke-width="2">
+    <path d="M0 360c100-120 200 60 300-40s200 80 300-20 200 30 200 30" stroke-opacity="0.45"/>
+    <path d="M100 380c80-90 160 40 240-30s160 60 240-15 160 20 160 20" stroke-opacity="0.25"/>
+  </g>
+  <g fill="none" stroke="#a78bfa" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="6 8">
+    <circle cx="560" cy="300" r="46"/>
+  </g>
+  <text x="400" y="150" text-anchor="middle" fill="#e2e8f0"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="28" font-weight="600">[Projekt 3]</text>
+  <text x="400" y="188" text-anchor="middle" fill="#94a3b8"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="16">[Platzhalterbild]</text>
+</svg>

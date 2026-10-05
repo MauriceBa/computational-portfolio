@@ -49,7 +49,7 @@ Five input classes or failure modes the spec implies that are easiest to get wro
 | `assets/js/i18n.js` | `I18N.en` and `I18N.fr` dictionaries. No logic. |
 | `assets/js/main.js` | Four pure functions (exported for tests) + all DOM wiring behind a `document` guard. |
 | `assets/img/project-1.svg` … `project-3.svg` | Decorative placeholder artwork for the project cards. |
-| `assets/img/og-image.svg` | Social preview placeholder. |
+| `assets/img/og-image.png` | Social preview image. **PNG, not SVG** — no major social platform rasterises SVG for `og:image`; Facebook, X and LinkedIn drop it. Generated once with a throwaway Node script (built-in `zlib` only), which is not committed. |
 | `assets/img/favicon.svg` | Favicon. |
 | `assets/pdf/resume_placeholder.pdf` | Placeholder CV, valid and openable. |
 | `assets/pdf/thesis_placeholder.pdf` | Placeholder publication PDF, valid and openable. |
@@ -366,11 +366,11 @@ git commit -m "feat: add project category filter predicate"
 ### Task 5: Placeholder SVG assets
 
 **Files:**
-- Create: `assets/img/project-1.svg`, `project-2.svg`, `project-3.svg`, `og-image.svg`, `favicon.svg`
+- Create: `assets/img/project-1.svg`, `project-2.svg`, `project-3.svg`, `favicon.svg`, `og-image.png`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: five static SVG files referenced by Task 7 (`project-1..3.svg`, `favicon.svg`) and Task 7's `og:image` meta (`og-image.svg`).
+- Produces: four static SVG files referenced by Task 7 (`project-1..3.svg`, `favicon.svg`) and one PNG for Task 7's `og:image` meta (`og-image.png`).
 
 - [ ] **Step 1: Create `assets/img/favicon.svg`**
 
@@ -380,11 +380,19 @@ A square 32×32 SVG using `currentColor`-independent fixed colors from the palet
 
 Each is 800×450 (16:9), a rounded-rect background, a centred 32-px grid motif, and a short placeholder label reading `[Projekt N]` in the system font stack at ~28 px. Vary the background hue per file so the three cards are visually distinguishable in the grid. Hardcode colors — these are decorative and sit behind text, so no cascade is available.
 
-- [ ] **Step 3: Create `assets/img/og-image.svg`**
+- [ ] **Step 3: Create `assets/img/og-image.png`**
 
-1200×630, background plus the text `[Vorname Nachname]` and `[Computational Engineer]` centred. Note in a comment that social platforms do not reliably rasterise SVG for `og:image`; the implementer should check whether a PNG is required and, if so, flag it rather than silently substituting a `.png` path that does not exist.
+1200×630, a diagonal navy gradient with a soft radial glow. It must be a **real PNG**, not an SVG: no major social platform rasterises SVG for `og:image`, so an SVG there renders as a broken preview or nothing at all.
 
-- [ ] **Step 4: Verify all five are valid XML and within budget**
+Generate it with a throwaway script using only Node's built-in `zlib` (deflate is all a PNG `IDAT` needs) and delete the script afterwards — it is a build-time artifact, not a repo file. Three details decide whether the file is 25 KB or 175 KB, and all three matter:
+
+- Use PNG filter type **2 (Up)** for every scanline except row 0. The artwork is a vertical gradient, so each row's delta from the row above is near-constant and deflate collapses it. Filter type 0 (None) is the default choice and wastes ~7× the size here.
+- Posterize to 5 bits per channel (`(v >> 3) << 3`). Invisible banding on a dark navy gradient, roughly a quarter of the bytes.
+- Drop the fine grid lines. At 32 px spacing across 1200×630 they are pure entropy the compressor cannot remove.
+
+Verify the result actually decodes, not merely that the signature looks right — open it via `System.Drawing.Image::FromFile`, assert 1200×630, and sample a few pixels to confirm the gradient rendered. Expected: under 40 KB.
+
+- [ ] **Step 4: Verify the SVGs are valid XML and all assets are within budget**
 
 Run: `npx html-validate assets/img/*.svg` then check sizes with `Get-ChildItem assets/img | Select-Object Name, Length`.
 Expected: no validation errors; every file ≤ 5120 bytes.
@@ -456,7 +464,7 @@ git commit -m "feat: add valid placeholder PDFs for CV and publications"
 
 - [ ] **Step 1: Write the `<head>`**
 
-Exactly these elements, per spec §4.8: `charset`, `viewport`, `title` carrying `data-i18n="meta.title"` with German text, `meta[name=description]` carrying `data-i18n="meta.description"` **and** `data-i18n-attr="content"` with German text in `content`, `link rel=icon` → `assets/img/favicon.svg`, `link rel=stylesheet` → `assets/css/style.css`, `og:title`/`og:description` (German, no `data-i18n`), `og:type=website`, `og:image` → `assets/img/og-image.svg`.
+Exactly these elements, per spec §4.8: `charset`, `viewport`, `title` carrying `data-i18n="meta.title"` with German text, `meta[name=description]` carrying `data-i18n="meta.description"` **and** `data-i18n-attr="content"` with German text in `content`, `link rel=icon` → `assets/img/favicon.svg`, `link rel=stylesheet` → `assets/css/style.css`, `og:title`/`og:description` (German, no `data-i18n`), `og:type=website`, `og:image` → `assets/img/og-image.png`.
 
 - [ ] **Step 2: Add the theme bootstrap inline script**
 
