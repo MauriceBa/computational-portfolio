@@ -491,7 +491,7 @@
             { x: width * 0.68, y: height * 0.66, r: Math.max(34, height * 0.08) }
           ];
 
-          count = Math.max(180, Math.min(660, Math.round((width * height) / 2733)));
+          count = Math.max(360, Math.min(1320, Math.round((width * height) / 1367)));
           pos = new Float32Array(count * TRAIL * 2);
           head = 0;
 
