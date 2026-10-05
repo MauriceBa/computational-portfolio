@@ -1,4 +1,4 @@
-# Computational Portfolio Implementation Plan
+﻿# Computational Portfolio Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -23,7 +23,10 @@
 - Contrast: body text ≥ 4.5:1 and large text/UI borders ≥ 3:1 in **both** themes. If a chosen accent value fails, the accent is adjusted — the threshold is never relaxed.
 - All animations and transitions are removed inside `@media (prefers-reduced-motion: reduce)`.
 - Budgets (from spec §7): `index.html` ≤ 40 KB, `style.css` ≤ 20 KB, `main.js` + `i18n.js` ≤ 20 KB combined, each SVG ≤ 5 KB, `resume_placeholder.pdf` ≤ 10 KB.
-- All test files are `tests/*.test.js` and run with `node --test tests/` from the repo root. They are never served and never referenced from HTML.
+- All test files are `tests/*.test.js` and run with **`node --test`** from the repo root
+  (bare, so Node auto-discovers `tests/`). Note: `node --test tests/` is **wrong** — Node
+  treats the argument as a module path and fails with `MODULE_NOT_FOUND`. They are never
+  served and never referenced from HTML.
 
 ## Review Focus
 
@@ -126,7 +129,7 @@ resolveTheme("auto", false)  === "light"
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --test tests/` from the repo root.
+Run: `node --test` from the repo root.
 Expected: FAIL — `Cannot find module '../assets/js/main.js'`.
 
 - [ ] **Step 3: Create `assets/js/main.js` with the export guard and `resolveTheme`**
@@ -164,7 +167,7 @@ The `module` guard must come before the DOM guard so a Node `require` never touc
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS — all `resolveTheme` cases green.
 
 - [ ] **Step 5: Commit**
@@ -207,7 +210,7 @@ Also assert `buildMailtoUrl("a@b.de", { subject: "", body: "" })` returns `"mail
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: FAIL — `buildMailtoUrl is not a function`.
 
 - [ ] **Step 3: Implement `buildMailtoUrl` in `assets/js/main.js`**
@@ -216,7 +219,7 @@ Signature: `buildMailtoUrl(email, fields)`. Behavior: `encodeURIComponent` each 
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -277,7 +280,7 @@ assert.equal(nodes[2].textContent, "DEUTSCH");  // Review Focus #3: German survi
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: FAIL — `Cannot find module '../assets/js/i18n.js'`.
 
 - [ ] **Step 3: Create `assets/js/i18n.js`**
@@ -301,7 +304,7 @@ Signature: `translateDocument(doc, dict) -> number`. Algorithm: `Array.from(doc.
 
 - [ ] **Step 5: Run test to verify it passes**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS — parity and both `translateDocument` paths green.
 
 - [ ] **Step 6: Commit**
@@ -339,7 +342,7 @@ cardMatchesCategory("simulation", "web") === false
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: FAIL — `cardMatchesCategory is not a function`.
 
 - [ ] **Step 3: Implement `cardMatchesCategory` in `assets/js/main.js`**
@@ -348,7 +351,7 @@ Signature: `cardMatchesCategory(cardCategory, activeCategory)`. Behavior: return
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -657,7 +660,7 @@ Using `node:fs` and `node:path` with `path.join(__dirname, '..')` as the repo ro
 
 - [ ] **Step 2: Run to verify it fails**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: FAIL on at least assertions 1 and 2 — the HTML ships before the dictionaries are fully wired, or a key is mistyped.
 
 - [ ] **Step 3: Fix the HTML or dictionaries until all pass**
@@ -666,7 +669,7 @@ Do not weaken an assertion to make it green. If an assertion is genuinely wrong,
 
 - [ ] **Step 4: Run the whole suite**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS — all four unit test files plus maintenance green.
 
 - [ ] **Step 5: Commit**
@@ -690,11 +693,11 @@ git commit -m "test: guard i18n key parity and asset link integrity"
 
 - [ ] **Step 1: Write the README swap guide**
 
-Must contain the five procedures from spec §8 in that order, and must state plainly that a placeholder with `data-i18n="hero.name"` lives in **three** places: the German text in `index.html`, `I18N.en`, and `I18N.fr`. Include a worked example: "to change the name, edit `<h1 data-i18n="hero.name">[Vorname Nachname]</h1>`, then `I18N.en["hero.name"]`, then `I18N.fr["hero.name"]`." Also cover: adding a fourth project card, updating the email address in all three places it appears, and the note that the legal pages need legally reviewed text. Add the run instructions: no build step, serve the folder with any static server, run tests with `node --test tests/`.
+Must contain the five procedures from spec §8 in that order, and must state plainly that a placeholder with `data-i18n="hero.name"` lives in **three** places: the German text in `index.html`, `I18N.en`, and `I18N.fr`. Include a worked example: "to change the name, edit `<h1 data-i18n="hero.name">[Vorname Nachname]</h1>`, then `I18N.en["hero.name"]`, then `I18N.fr["hero.name"]`." Also cover: adding a fourth project card, updating the email address in all three places it appears, and the note that the legal pages need legally reviewed text. Add the run instructions: no build step, serve the folder with any static server, run tests with `node --test`.
 
 - [ ] **Step 2: Run the full automated suite**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS, zero failures.
 
 - [ ] **Step 3: Run Lighthouse against a local server**
