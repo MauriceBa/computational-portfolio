@@ -62,8 +62,10 @@ test("the viewer reads the manifest and falls back to the active history file", 
 test("the viewer reuses the shared Ion token setup instead of embedding a token", () => {
   const app = readApp();
 
-  assert.match(app, /src="\.\.\/slopes\/ion-token\.js"/,
-    "the viewer no longer loads the shared ion-token.js");
+  assert.match(app, /src="ion-token\.js"/,
+    "the viewer no longer loads its own ion-token.js (CI writes it next to the app)");
+  assert.equal(app.includes("../slopes/ion-token.js"), false,
+    "a cross-directory token path breaks when the URL has no trailing slash");
   assert.match(app, /window\.ION_TOKEN/,
     "the viewer no longer reads the token from configuration");
   assert.match(app, /EllipsoidTerrainProvider/,
@@ -72,6 +74,15 @@ test("the viewer reuses the shared Ion token setup instead of embedding a token"
     "the token-free imagery fallback must not rely on a deprecated provider");
   assert.match(app, /try \{\s*state\.cesium = new Cesium\.Viewer/,
     "viewer creation is not wrapped, so a Cesium failure kills the 3D tab");
+  assert.equal(/fromRgb\(/.test(app), false,
+    "Cesium.Color.fromRgb does not exist and throws inside render3D");
+
+  // The deploy workflow must place the token next to *this* app as well.
+  const deploy = fs.readFileSync(path.join(ROOT, ".github", "workflows", "deploy.yml"), "utf8");
+  assert.match(deploy, /hot-air-balloon-tracking\/ion-token\.js/,
+    "deploy.yml never writes the token into the balloon app directory");
+  assert.match(deploy, /slopes\/ion-token\.js/,
+    "deploy.yml no longer writes the token for slopes");
 });
 
 test("the 2D and 3D views are both present and switchable", () => {

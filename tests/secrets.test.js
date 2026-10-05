@@ -39,7 +39,7 @@ const SCANNED_EXTENSIONS = new Set([".html", ".js", ".cjs", ".mjs", ".css", ".ym
  * site; slopes/ion-token.js is the gitignored file that is *supposed* to hold
  * a token. */
 const SKIPPED_DIRECTORIES = new Set([".git", "node_modules", "assets/sites"]);
-const SKIPPED_FILES = new Set(["slopes/ion-token.js"]);
+const SKIPPED_FILES = new Set(["slopes/ion-token.js", "hot-air-balloon-tracking/ion-token.js"]);
 
 function sourceFiles(dir = ROOT, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

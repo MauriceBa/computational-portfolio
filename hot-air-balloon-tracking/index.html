@@ -15,8 +15,11 @@
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
-  <!-- Same token file as /slopes/: gitignored locally, written by CI from the secret. -->
-  <script src="../slopes/ion-token.js"></script>
+  <!-- Local ion-token.js: written by CI from the CESIUM_ION_TOKEN secret
+       (copy it manually for local dev). A 404 causes no JS error --
+       window.ION_TOKEN stays undefined and the hasIon guard starts the
+       viewer token-free. -->
+  <script src="ion-token.js"></script>
 
   <style>
     :root {
@@ -210,7 +213,7 @@
     function cesiumColor(altM) {
       const i = Math.min(altBucket(altM), ALT_STOPS.length - 1);
       const [, ca] = ALT_STOPS[i];
-      return Cesium.Color.fromRgb(ca[0], ca[1], ca[2], 1);
+      return Cesium.Color.fromBytes(ca[0], ca[1], ca[2], 255);
     }
 
     function groupRuns(points) {
