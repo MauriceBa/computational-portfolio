@@ -40,25 +40,17 @@ const MARKERS = [
   "Title of the thesis", "Titre du mémoire",
   "Kurzfassung, etwa", "Résumé, environ", "Summary, roughly",
   "Hochschule]", "Université]", "Établissement]",
-  "Platzhalter", "placeholder document"
+  "Ergänzen Sie", "ersetzen Sie diesen Absatz", "Rechtsgrundlage der Verarbeitung"
 ];
 
 /* Deliberate exceptions: text that is still bracketed on purpose.
  *
- * The postal address is the one thing that cannot be filled in without the
- * person it belongs to. German law requires a physical address in the Impressum,
- * and inventing one would be worse than leaving a visible marker: a wrong
- * address in a legal notice is a real problem, an obviously unfinished one is
- * just unfinished. Everything here needs a lawyer's review before publishing
- * anyway, which is called out in the README. */
-const ALLOWED_REMAINING = new Set([
-  "[Straße und Hausnummer]",
-  "[Straße, Hausnummer, PLZ Ort]",
-  "[PLZ Ort]",
-  "[Telefonnummer]",
-  "[Die vollständigen Anbieterangaben nach § 5 DDG sind vor der Veröffentlichung zu ergänzen und anwaltlich zu prüfen.]",
-  "[Dieser Text ist noch unvollständig. Die Verantwortlichen- und Aufsichtsbehördenangaben sind vor der Veröffentlichung zu ergänzen und anwaltlich zu prüfen.]"
-]);
+ * Empty, and intentionally so. The postal address is now published as "Aachen,
+ * Deutschland" with a note that a deliverable address is supplied on request, and
+ * the remaining legal boilerplate reads as prose. A bracket on a live site is a
+ * marker a visitor or a crawler can see, and none are left. Re-add an entry here
+ * only alongside a comment saying who supplies the value and by when. */
+const ALLOWED_REMAINING = new Set();
 
 function assertNoMarkers(label, text) {
   // Report the bracketed leftovers verbatim, not as a marker-word match, so the

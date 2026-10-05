@@ -113,29 +113,36 @@ text replacement deletes them. A test enforces this; if you hit it, use
 
 ## What is still placeholder
 
-The portfolio content is real. Four things are not, and all four are deliberate:
+The text content is complete: **zero square-bracket placeholders remain** on any
+page, and `tests/placeholders.test.js` enforces that. Three binary assets are
+still generated stand-ins:
 
-1. **The postal address** in `impressum.html` and `datenschutz.html`
-   (`[Straße und Hausnummer]`, `[PLZ Ort]`, `[Telefonnummer]`). German law
-   requires a physical address in the Impressum, and inventing one would be worse
-   than leaving a visible marker.
-2. **`assets/pdf/resume_placeholder.pdf`** — the "Download CV" button points at a
+1. **`assets/pdf/resume_placeholder.pdf`** — the "Download CV" button points at a
    generated placeholder. Replace it with your real CV under the same filename, or
    change the `href`.
-3. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
-4. **`assets/img/og-image.png`** is a gradient with no text on it.
+2. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
+3. **`assets/img/og-image.png`** is a gradient with no text on it.
 
-Everything else is live content: name, role, availability, both about paragraphs,
-the four expertise cards, all three projects, and both research entries.
-
-Run this to confirm nothing was missed:
+Check for yourself:
 
 ```powershell
 Select-String -Path *.html, assets/js/i18n.js -Pattern '\[.+?\]'
 ```
 
-`tests/placeholders.test.js` fails if a placeholder reappears outside the
-allowlist of the four items above.
+That should return nothing.
+
+### About the postal address
+
+The Impressum lists `Aachen, Deutschland` plus a note that a deliverable address
+is supplied on request by email. That is a real pattern used by people without a
+registered office, but it is contested under § 5 DDG — courts have held that a
+`c/o` address or an on-request arrangement is not sufficient. A virtual office,
+a `c/o` at a known party, or a commercial address avoids the question entirely.
+
+**This is the one item on the site that still needs a lawyer, together with the
+rest of the legal pages.** The text is now complete and reads as a finished
+document rather than a draft, which means nothing on either legal page signals
+that it is unreviewed. That signal used to be the square brackets.
 
 ## Changing content
 
@@ -293,7 +300,10 @@ after editing content.
 ## Before you publish
 
 - [ ] `node --test` passes
-- [ ] Only the four documented placeholders remain (see "What is still placeholder")
+- [ ] No square-bracket placeholders remain. Site pages and dictionaries are
+      clean; verify with
+      `Select-String -Path index.html, impressum.html, datenschutz.html, assets/js/i18n.js -Pattern '\[.+?\]'`
+      — leave this README out of the search, it contains bracketed examples
 - [ ] `assets/pdf/resume_placeholder.pdf` replaced with the real CV
 - [ ] `assets/img/` holds real project visuals
 - [ ] Both legal pages reviewed by a lawyer
