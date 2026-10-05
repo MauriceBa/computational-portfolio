@@ -491,52 +491,8 @@
     if (cesiumViewer) return;
     try {
       const hasIon = Boolean(window.ION_TOKEN);
-
-      /* Custom picker entries instead of Cesium's defaults: the stock list
-       * ships NASA "Blue Marble"/"Earth by Night" layers whose WMS endpoints
-       * are retired, so selecting them logs tile 404s forever. All three
-       * sources below are free, token-free and still served. */
-      const layerIcon = "data:image/svg+xml," + encodeURIComponent(
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
-        '<circle cx="50" cy="50" r="42" fill="#3b82f6"/>' +
-        '<path d="M8 50h84M50 8c18 18 18 66 0 84M50 8c-18 18-18 66 0 84" ' +
-        'stroke="#fff" stroke-width="5" fill="none"/></svg>'
-      );
-      const baseLayerModels = [
-        new Cesium.ImageryLayerViewModel({
-          name: "OpenStreetMap",
-          iconUrl: layerIcon,
-          imageryProvider: new Cesium.UrlTemplateImageryProvider({
-            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            maximumLevel: 19,
-            credit: "© OpenStreetMap contributors"
-          })
-        }),
-        new Cesium.ImageryLayerViewModel({
-          name: "Esri World Imagery",
-          iconUrl: layerIcon,
-          imageryProvider: new Cesium.UrlTemplateImageryProvider({
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            maximumLevel: 19,
-            credit: "© Esri"
-          })
-        }),
-        new Cesium.ImageryLayerViewModel({
-          name: "CartoDB Dark",
-          iconUrl: layerIcon,
-          imageryProvider: new Cesium.UrlTemplateImageryProvider({
-            url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-            subdomains: "abcd",
-            maximumLevel: 19,
-            credit: "© CartoDB © OpenStreetMap contributors"
-          })
-        })
-      ];
-
       const viewerOptions = {
         baseLayerPicker: true,
-        imageryProviderViewModels: baseLayerModels,
-        selectedImageryViewModelIndex: 0,
         timeline: false,
         animation: false
       };
@@ -544,8 +500,11 @@
         viewerOptions.terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
       } else {
         // No token configured: keep the demo usable with token-free sources
-        // instead of failing every Ion request. Imagery comes from the picker.
+        // instead of failing every Ion request.
         viewerOptions.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        viewerOptions.baseLayer = new Cesium.ImageryLayer(
+          new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' })
+        );
       }
       cesiumViewer = new Cesium.Viewer('cesium-map', viewerOptions);
       for (const d of allDays) {
