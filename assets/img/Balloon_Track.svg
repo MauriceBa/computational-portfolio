@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="943" height="530" viewBox="0 0 943 530" role="img" aria-label="Illustration eines Heißluftballons mit farbig nach Höhe codierter Flugbahn auf dunkler Karte">
+  <defs>
+    <linearGradient id="path" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#facc15"/>
+      <stop offset="0.35" stop-color="#22c55e"/>
+      <stop offset="0.7" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="balloon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ef4444"/>
+      <stop offset="0.6" stop-color="#f97316"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#58a6ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#58a6ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#21262d" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="943" height="530" fill="#0d1117"/>
+  <rect width="943" height="530" fill="url(#grid)"/>
+
+  <!-- stylised terrain contours -->
+  <g fill="none" stroke="#1b2430" stroke-width="2">
+    <path d="M-20 430 C 120 380, 210 470, 340 420 S 560 360, 700 410 S 880 470, 963 420"/>
+    <path d="M-20 480 C 140 440, 260 510, 400 460 S 640 420, 780 470 S 900 510, 963 480"/>
+    <path d="M-20 360 C 90 330, 240 400, 380 350 S 620 300, 760 350 S 900 390, 963 350"/>
+  </g>
+
+  <!-- flight path: low (yellow) to high (purple) -->
+  <path d="M60 455 C 190 430, 250 380, 330 330 S 470 240, 560 200 S 720 130, 880 95"
+        fill="none" stroke="url(#path)" stroke-width="7" stroke-linecap="round"/>
+  <!-- observation points -->
+  <g fill="#0d1117" stroke-width="3">
+    <circle cx="60" cy="455" r="7" stroke="#facc15"/>
+    <circle cx="205" cy="402" r="7" stroke="#22c55e"/>
+    <circle cx="330" cy="330" r="7" stroke="#22c55e"/>
+    <circle cx="462" cy="245" r="7" stroke="#3b82f6"/>
+    <circle cx="560" cy="200" r="7" stroke="#3b82f6"/>
+    <circle cx="715" cy="134" r="7" stroke="#a855f7"/>
+  </g>
+
+  <!-- current position marker -->
+  <circle cx="880" cy="95" r="46" fill="url(#glow)"/>
+  <circle cx="880" cy="95" r="9" fill="#58a6ff" stroke="#ffffff" stroke-width="3"/>
+
+  <!-- hot air balloon -->
+  <g transform="translate(655 250) scale(1.15)">
+    <ellipse cx="0" cy="92" rx="26" ry="7" fill="#000" opacity="0.35"/>
+    <path d="M0 -70 C 38 -70 56 -36 56 -6 C 56 20 34 44 14 56 L -14 56 C -34 44 -56 20 -56 -6 C -56 -36 -38 -70 0 -70 Z" fill="url(#balloon)"/>
+    <path d="M0 -70 C 14 -40 18 -4 14 56 M0 -70 C -14 -40 -18 -4 -14 56 M0 -70 L0 56" stroke="#0d1117" stroke-width="3" fill="none" opacity="0.55"/>
+    <path d="M-14 56 L -10 74 M14 56 L 10 74" stroke="#8b949e" stroke-width="3"/>
+    <rect x="-14" y="74" width="28" height="18" rx="4" fill="#a16207"/>
+  </g>
+
+  <!-- altitude legend -->
+  <g transform="translate(48 44)" font-family="system-ui, sans-serif">
+    <rect x="0" y="0" width="180" height="10" rx="5" fill="url(#path)" opacity="0.9"/>
+    <text x="0" y="30" fill="#8b949e" font-size="13">0 m</text>
+    <text x="146" y="30" fill="#8b949e" font-size="13">5000 m+</text>
+    <text x="0" y="54" fill="#e6edf3" font-size="15" font-weight="600">Höhenprofil der Flugbahn</text>
+  </g>
+</svg>

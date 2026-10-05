@@ -20,7 +20,7 @@ const main = fs.readFileSync(path.join(ROOT, "assets", "js", "main.js"), "utf8")
 test("every project image is a keyboard-reachable lightbox trigger", () => {
   const triggers = [...html.matchAll(/<button class="project__zoom"[\s\S]*?<\/button>/g)];
 
-  assert.equal(triggers.length, 6, `expected 6 zoom triggers, found ${triggers.length}`);
+  assert.equal(triggers.length, 7, `expected 7 zoom triggers, found ${triggers.length}`);
   for (const [trigger] of triggers) {
     assert.match(trigger, /<img class="project__media"/, "a trigger does not wrap the image");
     assert.match(trigger, /data-i18n-attr="aria-label"/,
@@ -91,28 +91,35 @@ test("the flow field stops animating when nobody can see it", () => {
     "the field does not honour reduced motion");
 });
 
-test("the ski visualiser is the one featured card, and it spans the grid", () => {
+test("the demo apps are the featured cards, and they span the grid", () => {
   const featured = [...html.matchAll(/<article class="([^"]*project--featured[^"]*)"/g)];
 
-  assert.equal(featured.length, 1, `expected 1 featured card, found ${featured.length}`);
+  // Both live apps (ski visualiser, balloon tracker) get the full-width card.
+  assert.equal(featured.length, 2, `expected 2 featured cards, found ${featured.length}`);
 
-  const block = html.match(/<article class="[^"]*project--featured[^"]*">[\s\S]*?<\/article>/);
-  assert.ok(block, "the featured card could not be read");
-  assert.match(block[0], /project6\.title/, "the featured card is not the ski visualiser");
-  assert.match(block[0], /class="project__live"/, "the featured card lost its live badge");
+  const blocks = [...html.matchAll(/<article class="[^"]*project--featured[^"]*">[\s\S]*?<\/article>/g)];
+  const keys = blocks.map((b) => (b[0].match(/project\d\.title/) || [])[0]);
+  assert.deepEqual(keys, ["project6.title", "project7.title"],
+    "the featured cards must be the ski visualiser and the balloon tracker");
+  for (const block of blocks) {
+    assert.match(block[0], /class="project__live"/, "a featured card lost its live badge");
+  }
 
   assert.match(css, /\.project--featured \{\s*grid-column: 1 \/ -1/,
     "the featured card does not span the grid");
 });
 
 test("the live badge and the demo button carry the right semantics", () => {
-  assert.equal((html.match(/class="project__live"/g) || []).length, 1,
-    "the live badge must appear exactly once");
+  assert.equal((html.match(/class="project__live"/g) || []).length, 2,
+    "the live badge must appear once per featured card");
   assert.match(html, /class="project__live-dot" aria-hidden="true"/,
     "the pulsing dot is not hidden from screen readers");
   assert.match(html, /<a class="btn btn--primary" href="\/slopes\/"/,
-    "the live demo link is not styled as the card's primary action");
+    "the ski demo link is not styled as the card's primary action");
+  assert.match(html, /<a class="btn btn--primary" href="\/hot-air-balloon-tracking\/"/,
+    "the balloon demo link is not styled as the card's primary action");
 
-  assert.ok("project6.live" in I18N.en && "project6.live" in I18N.fr,
-    "project6.live missing from a dictionary");
+  for (const key of ["project6.live", "project7.live"]) {
+    assert.ok(key in I18N.en && key in I18N.fr, `${key} missing from a dictionary`);
+  }
 });

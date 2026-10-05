@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heißluftballon-Tracker</title>
+  <meta name="description" content="Live-Tracking aktiver Heißluftballone mit 2D-Karte, 3D-Globus, Höhenprofil und Playback." />
+  <!-- FAVICON -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎈</text></svg>">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- CESIUM -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+  <!-- Same token file as /slopes/: gitignored locally, written by CI from the secret. -->
+  <script src="../slopes/ion-token.js"></script>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    header .subtitle { color: var(--muted); font-size: 0.85rem; }
+    .balloon-icon { font-size: 1.8rem; }
+    nav { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    nav button, nav a { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    nav button:hover, nav button.active, nav a:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    main { padding: 24px; max-width: 1600px; margin: 0 auto; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--accent); line-height: 1.2; margin-bottom: 6px; word-break: break-word; }
+    .stat-card .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .toolbar select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 6px; font-size: 0.85rem; }
+    .btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .legend { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--muted); margin-left: auto; }
+    .legend-bar { width: 160px; height: 10px; border-radius: 5px; border: 1px solid var(--border); background: linear-gradient(90deg, #facc15 0%, #facc15 12%, #22c55e 35%, #3b82f6 70%, #a855f7 100%); }
+
+    #map2d, #map3d { height: 680px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); z-index: 1; }
+    #map3d { display: none; }
+
+    /* PLAYBACK */
+    .playback { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-top: 16px; flex-wrap: wrap; }
+    .playback input[type="range"] { flex: 1; min-width: 200px; accent-color: var(--accent); cursor: pointer; }
+    .playback .time-label { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--text); min-width: 170px; }
+    .playback select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 6px; font-size: 0.85rem; }
+    #play-status { font-size: 0.75rem; color: var(--muted); }
+
+    /* INSPECTOR */
+    #inspector { display: none; background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 18px 20px; margin-top: 16px; }
+    #inspector.show { display: block; }
+    #inspector h3 { font-size: 1.05rem; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    #inspector .sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 12px; }
+    .inspector-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+    .inspector-grid .cell .val { font-weight: 700; font-size: 1rem; }
+    .inspector-grid .cell .lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    #inspector .fr24 { display: inline-block; margin-top: 12px; font-size: 0.8rem; color: var(--accent); }
+
+    .loader { display: flex; align-items: center; justify-content: center; padding: 48px; color: var(--muted); }
+    .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #error-banner { display: none; background: #3d1d1d; border: 1px solid #ef4444; color: #fca5a5; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.85rem; }
+    #error-banner.show { display: block; }
+
+    @media (max-width: 768px) {
+      header { flex-direction: column; align-items: flex-start; }
+      nav { margin-left: 0; width: 100%; overflow-x: auto; padding-bottom: 4px; }
+      #map2d, #map3d { height: 450px; }
+      .legend { margin-left: 0; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .playback .time-label { min-width: 100%; order: 9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { animation: none; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <span class="balloon-icon" aria-hidden="true">🎈</span>
+      <div>
+        <h1>Heißluftballon-Tracker</h1>
+        <div class="subtitle" id="header-subtitle">Lade Flugdaten …</div>
+      </div>
+    </div>
+    <nav aria-label="Ansicht">
+      <button class="active" id="btn-2d" type="button">🗺️ 2D-Karte</button>
+      <button id="btn-3d" type="button">🌍 3D-Globus</button>
+      <a href="/">← Portfolio</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="error-banner" role="status"></div>
+
+    <div class="stats-grid" id="stats"></div>
+
+    <div class="toolbar">
+      <label for="balloon-filter" style="font-size:0.8rem;color:var(--muted)">Ballon:</label>
+      <select id="balloon-filter"><option value="all">Alle Ballons</option></select>
+      <button class="btn" id="btn-load-shard" type="button">⬇ Ältere Daten laden</button>
+      <div class="legend" aria-hidden="true">
+        <span>niedrig</span><div class="legend-bar"></div><span>hoch</span>
+      </div>
+    </div>
+
+    <div id="map2d" role="application" aria-label="2D-Karte der Ballonflugbahnen"></div>
+    <div id="map3d" role="application" aria-label="3D-Globus der Ballonflugbahnen"></div>
+
+    <div class="playback">
+      <button class="btn" id="btn-play" type="button" aria-label="Playback starten">▶</button>
+      <input type="range" id="play-slider" min="0" max="1000" value="1000" step="1" aria-label="Zeitpunkt" disabled />
+      <span class="time-label" id="play-time">–</span>
+      <label for="play-speed" style="font-size:0.75rem;color:var(--muted)">Tempo:</label>
+      <select id="play-speed">
+        <option value="1">1x</option>
+        <option value="5" selected>5x</option>
+        <option value="20">20x</option>
+      </select>
+      <span id="play-status"></span>
+    </div>
+
+    <div id="inspector" aria-live="polite"></div>
+
+    <div class="loader" id="loader"><div class="spinner"></div><span>Lade Flugdaten …</span></div>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    // ---- Data model -----------------------------------------------------
+    // balloons: Map(callsign -> {points:[{lat,lon,altM,speed,time,id,reg}], ...})
+    const state = {
+      balloons: new Map(),
+      shardQueue: [],       // history files from the manifest, newest first
+      timeline: [],         // sorted unique observation timestamps (ms)
+      filter: "all",
+      mode: "2d",
+      map: null,
+      pathLayer: null,
+      markers: new Map(),   // callsign -> L.circleMarker
+      cesium: null,
+      cesiumPaths: null,
+      cesiumDots: null,
+      playing: false,
+      playIdx: 0,           // index into state.timeline
+      timer: null
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = new Intl.NumberFormat("de-DE");
+
+    /* ponytail: altitude bands as bucket boundaries; runs of equal bucket are
+       drawn as one polyline each (Leaflet/Cesium cannot recolor per vertex). */
+    const ALT_STOPS = [
+      [0, [250, 204, 21]],
+      [200, [250, 204, 21]],
+      [800, [34, 197, 94]],
+      [2500, [59, 130, 246]],
+      [20000, [168, 85, 247]]
+    ];
+
+    function altBucket(altM) {
+      let i = 0;
+      while (i < ALT_STOPS.length - 1 && altM >= ALT_STOPS[i + 1][0]) i++;
+      return i;
+    }
+
+    function altColor(altM) {
+      const i = Math.min(altBucket(altM), ALT_STOPS.length - 1);
+      const [a, ca] = ALT_STOPS[i];
+      const [b, cb] = ALT_STOPS[i + 1] || [a, ca];
+      const t = b > a ? Math.min(1, Math.max(0, (altM - a) / (b - a))) : 0;
+      const c = ca.map((v, k) => Math.round(v + (cb[k] - v) * t));
+      return "rgb(" + c.join(",") + ")";
+    }
+
+    function cesiumColor(altM) {
+      const i = Math.min(altBucket(altM), ALT_STOPS.length - 1);
+      const [, ca] = ALT_STOPS[i];
+      return Cesium.Color.fromRgb(ca[0], ca[1], ca[2], 1);
+    }
+
+    function groupRuns(points) {
+      // Contiguous runs of the same altitude bucket -> {color, pts}
+      const runs = [];
+      let cur = null;
+      for (const p of points) {
+        const b = altBucket(p.altM);
+        if (!cur || cur.b !== b) {
+          if (cur) cur.pts.push(p); // one shared vertex so runs connect
+          cur = { b: b, pts: [] };
+          runs.push(cur);
+        }
+        cur.pts.push(p);
+      }
+      return runs;
+    }
+
+    // ---- Fetch -----------------------------------------------------------
+    async function getJSON(url) {
+      try {
+        const res = await fetch(url, { cache: "no-cache" });
+        return res.ok ? await res.json() : null;
+      } catch (e) {
+        console.warn("fetch failed:", url, e);
+        return null;
+      }
+    }
+
+    // ---- Ingest ----------------------------------------------------------
+    function addPoint(cs, p) {
+      let b = state.balloons.get(cs);
+      if (!b) {
+        b = { points: [], reg: null, id: null };
+        state.balloons.set(cs, b);
+      }
+      const last = b.points[b.points.length - 1];
+      const t = Date.parse(p.time);
+      if (last && last.t === t && last.lat === p.lat && last.lon === p.lon) return;
+      const pt = { lat: p.lat, lon: p.lon, altM: p.altM, speed: p.speed || 0, time: p.time, t: t };
+      b.points.push(pt);
+      if (p.reg && p.reg !== "N/A") b.reg = p.reg;
+      if (p.id) b.id = p.id;
+    }
+
+    function ingestTracks(tracks) {
+      for (const [cs, pts] of Object.entries(tracks || {})) {
+        for (const p of pts) {
+          addPoint(cs, { lat: p.lat, lon: p.lon, altM: p.alt_m, time: p.time });
+        }
+      }
+    }
+
+    function ingestHistory(entries) {
+      for (const e of entries || []) {
+        if (typeof e.lat !== "number") continue;
+        addPoint(e.callsign, {
+          lat: e.lat, lon: e.lon, altM: e.altitude_m,
+          speed: e.ground_speed, time: e.timestamp,
+          id: e.id, reg: e.registration
+        });
+      }
+    }
+
+    function finalize() {
+      for (const b of state.balloons.values()) {
+        b.points.sort((x, y) => x.t - y.t);
+        b.maxAlt = b.points.reduce((m, p) => Math.max(m, p.altM), 0);
+        b.first = b.points[0].t;
+        b.last = b.points[b.points.length - 1].t;
+        b.speedAvg = b.points.length
+          ? b.points.reduce((s, p) => s + (p.speed || 0), 0) / b.points.length
+          : 0;
+      }
+      const times = new Set();
+      for (const b of state.balloons.values()) for (const p of b.points) times.add(p.t);
+      state.timeline = [...times].sort((a, c) => a - c);
+      state.playIdx = state.timeline.length - 1;
+    }
+
+    function visibleBalloons() {
+      if (state.filter === "all") return [...state.balloons.entries()];
+      const b = state.balloons.get(state.filter);
+      return b ? [[state.filter, b]] : [];
+    }
+
+    // ---- 2D --------------------------------------------------------------
+    function initMap() {
+      if (state.map) return;
+      state.map = L.map("map2d", { zoomControl: true, preferCanvas: true });
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(state.map);
+      state.pathLayer = L.layerGroup().addTo(state.map);
+      state.map.fitBounds([[40, -10], [58, 30]], { maxZoom: 6 }); // Central Europe default
+    }
+
+    function render2D() {
+      initMap();
+      state.pathLayer.clearLayers();
+      state.markers.clear();
+      let bounds = [];
+
+      for (const [cs, b] of visibleBalloons()) {
+        for (const run of groupRuns(b.points)) {
+          const line = L.polyline(
+            run.pts.map((p) => [p.lat, p.lon]),
+            { color: altColor(ALT_STOPS[run.b][0]), weight: 3, opacity: 0.85 }
+          );
+          line.on("click", () => inspect(cs));
+          line.addTo(state.pathLayer);
+        }
+        const last = b.points[b.points.length - 1];
+        const m = L.circleMarker([last.lat, last.lon], {
+          radius: 7, color: "#fff", weight: 2,
+          fillColor: altColor(last.altM), fillOpacity: 1
+        });
+        m.bindTooltip(cs, { direction: "top", offset: [0, -8] });
+        m.on("click", () => inspect(cs));
+        m.addTo(state.pathLayer);
+        state.markers.set(cs, m);
+        for (const p of b.points) bounds.push([p.lat, p.lon]);
+      }
+
+      if (bounds.length && state.filter !== "all") {
+        state.map.fitBounds(bounds, { maxZoom: 9, padding: [30, 30] });
+      } else if (bounds.length) {
+        state.map.fitBounds(bounds, { maxZoom: 7, padding: [30, 30] });
+      }
+      applyPlaybackToMarkers();
+    }
+
+    // ---- 3D --------------------------------------------------------------
+    async function initCesium() {
+      if (state.cesium) return;
+      if (window.ION_TOKEN && window.Cesium) Cesium.Ion.defaultAccessToken = window.ION_TOKEN;
+      const hasIon = Boolean(window.ION_TOKEN);
+      const opts = {
+        baseLayerPicker: false, geocoder: false, homeButton: false,
+        sceneModePicker: false, navigationHelpButton: false, animation: false,
+        timeline: false, fullscreenButton: false, infoBox: false,
+        selectionIndicator: false, creditContainer: document.createElement("div")
+      };
+      try {
+        if (hasIon) opts.terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
+        else throw new Error("no ion token");
+      } catch (e) {
+        opts.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        opts.baseLayer = new Cesium.ImageryLayer(
+          new Cesium.OpenStreetMapImageryProvider({ url: "https://tile.openstreetmap.org/" })
+        );
+      }
+      state.cesium = new Cesium.Viewer("map3d", opts);
+      state.cesiumPaths = state.cesium.scene.primitives.add(new Cesium.PolylineCollection());
+      state.cesiumDots = state.cesium.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+      render3D();
+    }
+
+    function render3D() {
+      if (!state.cesium) return;
+      state.cesiumPaths.removeAll();
+      state.cesiumDots.removeAll();
+
+      let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+      for (const [cs, b] of visibleBalloons()) {
+        for (const run of groupRuns(b.points)) {
+          state.cesiumPaths.add({
+            positions: run.pts.map((p) => Cesium.Cartesian3.fromDegrees(p.lon, p.lat, Math.max(p.altM, 0))),
+            width: 4,
+            material: cesiumColor(ALT_STOPS[run.b][0])
+          });
+        }
+        for (const p of b.points) {
+          minLat = Math.min(minLat, p.lat); maxLat = Math.max(maxLat, p.lat);
+          minLon = Math.min(minLon, p.lon); maxLon = Math.max(maxLon, p.lon);
+        }
+        const last = b.points[b.points.length - 1];
+        state.cesiumDots.add({
+          position: Cesium.Cartesian3.fromDegrees(last.lon, last.lat, Math.max(last.altM, 0)),
+          color: cesiumColor(last.altM), pixelSize: 9,
+          outlineColor: Cesium.Color.WHITE, outlineWidth: 2
+        });
+      }
+      if (maxLat > minLat) {
+        state.cesium.camera.flyTo({
+          destination: Cesium.Rectangle.fromDegrees(
+            Math.max(minLon - 4, -180), Math.max(minLat - 3, -85),
+            Math.min(maxLon + 4, 180), Math.min(maxLat + 3, 85)
+          ),
+          duration: 1.2
+        });
+      }
+      applyPlaybackToDots();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      $("btn-2d").classList.toggle("active", mode === "2d");
+      $("btn-3d").classList.toggle("active", mode === "3d");
+      $("map2d").style.display = mode === "2d" ? "block" : "none";
+      $("map3d").style.display = mode === "3d" ? "block" : "none";
+      if (mode === "3d") {
+        initCesium().then(() => state.cesium.resize());
+      } else if (state.map) {
+        state.map.invalidateSize();
+      }
+    }
+
+    // ---- Playback ----------------------------------------------------------
+    function positionAt(b, t) {
+      let lo = 0, hi = b.points.length - 1, res = null;
+      while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        if (b.points[mid].t <= t) { res = b.points[mid]; lo = mid + 1; }
+        else hi = mid - 1;
+      }
+      return res;
+    }
+
+    function applyPlaybackToMarkers() {
+      const t = state.timeline[state.playIdx];
+      if (!t) return;
+      for (const [cs, b] of visibleBalloons()) {
+        const m = state.markers.get(cs);
+        const p = positionAt(b, t);
+        if (m && p) m.setLatLng([p.lat, p.lon]);
+        if (m && !p) m.setLatLng([b.points[0].lat, b.points[0].lon]);
+      }
+      $("play-time").textContent = new Date(t).toLocaleString("de-DE");
+      $("play-slider").value = state.timeline.length > 1
+        ? Math.round((state.playIdx / (state.timeline.length - 1)) * 1000)
+        : 1000;
+    }
+
+    function applyPlaybackToDots() {
+      if (!state.cesiumDots) return;
+      const t = state.timeline[state.playIdx];
+      if (!t) return;
+      const visible = visibleBalloons();
+      for (let i = 0; i < visible.length && i < state.cesiumDots.length; i++) {
+        const [, b] = visible[i];
+        const p = positionAt(b, t) || b.points[b.points.length - 1];
+        state.cesiumDots.get(i).position =
+          Cesium.Cartesian3.fromDegrees(p.lon, p.lat, Math.max(p.altM, 0));
+      }
+    }
+
+    function playbackTick() {
+      const step = Number($("play-speed").value); // observations per tick
+      state.playIdx = Math.min(state.playIdx + step, state.timeline.length - 1);
+      applyPlaybackToMarkers();
+      if (state.cesiumDots) applyPlaybackToDots();
+      if (state.playIdx >= state.timeline.length - 1) togglePlay(false);
+    }
+
+    function togglePlay(force) {
+      const shouldPlay = typeof force === "boolean" ? force : !state.playing;
+      if (shouldPlay && state.timeline.length < 2) return;
+      state.playing = shouldPlay;
+      $("btn-play").textContent = shouldPlay ? "⏸" : "▶";
+      $("btn-play").setAttribute("aria-label", shouldPlay ? "Playback pausieren" : "Playback starten");
+      clearInterval(state.timer);
+      if (shouldPlay) {
+        if (state.playIdx >= state.timeline.length - 1) state.playIdx = 0;
+        state.timer = setInterval(playbackTick, 100);
+      }
+    }
+
+    // ---- Inspector / stats / toolbar ----------------------------------------
+    function inspect(cs) {
+      const b = state.balloons.get(cs);
+      if (!b) return;
+      const durH = (b.last - b.first) / 36e5;
+      const durTxt = durH >= 24
+        ? Math.floor(durH / 24) + " d " + Math.round(durH % 24) + " h"
+        : durH.toFixed(1) + " h";
+      const cell = (val, lbl) =>
+        '<div class="cell"><div class="val">' + val + '</div><div class="lbl">' + lbl + "</div></div>";
+      const range = new Date(b.first).toLocaleDateString("de-DE") + " – " +
+        new Date(b.last).toLocaleDateString("de-DE");
+      $("inspector").innerHTML =
+        "<h3>🎈 " + cs + (b.reg ? ' <span style="font-size:0.8rem;color:var(--muted)">' + b.reg + "</span>" : "") + "</h3>" +
+        '<div class="sub">Flugpfad-Details</div>' +
+        '<div class="inspector-grid">' +
+        cell(range, "Zeitraum") +
+        cell(durTxt, "Dauer") +
+        cell(fmt.format(b.maxAlt) + " m", "Maximale Höhe") +
+        cell(Math.round(b.speedAvg) + " kt", "Ø Geschwindigkeit") +
+        cell(fmt.format(b.points.length), "Datenpunkte") +
+        "</div>" +
+        (b.id ? '<a class="fr24" href="https://www.flightradar24.com/' + b.id +
+          '" target="_blank" rel="noopener noreferrer">Auf FlightRadar24 ansehen ↗</a>' : "");
+      $("inspector").classList.add("show");
+    }
+
+    function updateStats() {
+      const balloons = [...state.balloons.values()];
+      const points = balloons.reduce((s, b) => s + b.points.length, 0);
+      const maxAlt = balloons.reduce((m, b) => Math.max(m, b.maxAlt), 0);
+      const first = balloons.reduce((m, b) => Math.min(m, b.first), Infinity);
+      const last = balloons.reduce((m, b) => Math.max(m, b.last), -Infinity);
+      const cell = (val, lbl) =>
+        '<div class="stat-card"><div class="value">' + val + '</div><div class="label">' + lbl + "</div></div>";
+      $("stats").innerHTML =
+        cell(balloons.length, "Ballons im Datensatz") +
+        cell(fmt.format(points), "Flugdatenpunkte") +
+        cell(fmt.format(Math.round(maxAlt)) + " m", "Höchster Punkt") +
+        cell(balloons.length
+          ? new Date(first).toLocaleDateString("de-DE") + " – " + new Date(last).toLocaleDateString("de-DE")
+          : "–", "Erfassungszeitraum");
+      $("header-subtitle").textContent = balloons.length
+        ? fmt.format(points) + " Datenpunkte · zuletzt " + new Date(last).toLocaleString("de-DE")
+        : "Keine Daten";
+    }
+
+    function updateFilterOptions() {
+      const sel = $("balloon-filter");
+      const names = [...state.balloons.keys()].sort();
+      sel.innerHTML = '<option value="all">Alle Ballons</option>' +
+        names.map((n) => '<option value="' + n + '"' + (n === state.filter ? " selected" : "") + ">" + n + "</option>").join("");
+    }
+
+    function updateShardButton() {
+      const btn = $("btn-load-shard");
+      if (state.shardQueue.length) {
+        btn.disabled = false;
+        btn.textContent = "⬇ Historie laden (" + state.shardQueue.length + ")";
+      } else {
+        btn.disabled = true;
+        btn.textContent = "✓ vollständige Historie geladen";
+      }
+    }
+
+    async function loadNextShard() {
+      const file = state.shardQueue.shift();
+      if (!file) return;
+      $("play-status").textContent = "Lade " + file + " …";
+      const data = await getJSON("app-data/" + file);
+      if (Array.isArray(data)) {
+        ingestHistory(data);
+        finalize();
+        render2D();
+        if (state.cesium) render3D();
+        updateStats();
+        updateFilterOptions();
+        applyPlaybackToMarkers();
+      }
+      $("play-status").textContent = "";
+      updateShardButton();
+    }
+
+    // ---- Boot ---------------------------------------------------------------
+    async function boot() {
+      initMap();
+      let manifest = await getJSON("app-data/manifest.json");
+      if (!manifest || !Array.isArray(manifest.shards)) {
+        // Static fallback: the active history file always exists.
+        manifest = { shards: [{ file: "balloon_history.json" }], generated: null };
+      }
+      const tracks = await getJSON("app-data/balloon_tracks.json");
+      if (tracks) ingestTracks(tracks);
+
+      const newest = manifest.shards[manifest.shards.length - 1];
+      state.shardQueue = manifest.shards.slice(0, -1).reverse().map((s) => s.file);
+
+      // Newest history shard loads after first paint so the UI is instant.
+      const loadActive = async () => {
+        const data = await getJSON("app-data/" + newest.file);
+        if (Array.isArray(data)) ingestHistory(data);
+        finalize();
+        updateStats();
+        updateFilterOptions();
+        render2D();
+        applyPlaybackToMarkers();
+        $("loader").style.display = "none";
+        updateShardButton();
+      };
+
+      if (state.balloons.size) {
+        finalize();
+        updateStats();
+        updateFilterOptions();
+        render2D();
+        applyPlaybackToMarkers();
+        $("loader").style.display = "none";
+        updateShardButton();
+        window.addEventListener("load", () => setTimeout(loadActive, 300), { once: true });
+      } else {
+        await loadActive();
+      }
+
+      if (!state.balloons.size) {
+        $("loader").innerHTML = "<span>Keine Flugdaten verfügbar – die nächste Aktualisierung läuft in Kürze.</span>";
+        $("header-subtitle").textContent = "Noch keine Daten";
+      }
+      const slider = $("play-slider");
+      slider.disabled = state.timeline.length < 2;
+    }
+
+    // ---- Events ---------------------------------------------------------------
+    $("btn-2d").addEventListener("click", () => setMode("2d"));
+    $("btn-3d").addEventListener("click", () => setMode("3d"));
+    $("btn-play").addEventListener("click", () => togglePlay());
+    $("btn-load-shard").addEventListener("click", loadNextShard);
+    $("balloon-filter").addEventListener("change", (e) => {
+      state.filter = e.target.value;
+      render2D();
+      if (state.cesium) render3D();
+      $("inspector").classList.remove("show");
+      const b = state.balloons.get(state.filter);
+      if (b) inspect(state.filter);
+    });
+    $("play-slider").addEventListener("input", (e) => {
+      if (!state.timeline.length) return;
+      state.playIdx = Math.round((Number(e.target.value) / 1000) * (state.timeline.length - 1));
+      applyPlaybackToMarkers();
+      if (state.cesiumDots) applyPlaybackToDots();
+    });
+
+    boot().catch((err) => {
+      console.error(err);
+      $("loader").style.display = "none";
+      const banner = $("error-banner");
+      banner.textContent = "Flugdaten konnten nicht geladen werden: " + err.message;
+      banner.classList.add("show");
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -449748,5 +449748,19 @@
     "distance_km": 137.7,
     "timestamp": "2026-10-05T16:51:53.870060+00:00",
     "date": "2026-10-05"
+  },
+  {
+    "id": "41fc6edd",
+    "callsign": "BALAI2",
+    "registration": "N/A",
+    "lat": 46.229,
+    "lon": 6.101,
+    "altitude": 0,
+    "altitude_m": 0,
+    "ground_speed": 0,
+    "aircraft_code": "GRND",
+    "distance_km": 505.0,
+    "timestamp": "2026-10-05T18:23:50.352754+00:00",
+    "date": "2026-10-05"
   }
 ]

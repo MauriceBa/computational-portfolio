@@ -19,12 +19,12 @@ const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
  * -- turning a layout change into a "missing project" failure. */
 const cards = [...html.matchAll(/<article class="card project[^"]*"[\s\S]*?<\/article>/g)].map((m) => m[0]);
 
-test("all six projects are present", () => {
-  assert.equal(cards.length, 6, `expected 6 project cards, found ${cards.length}`);
+test("all seven projects are present", () => {
+  assert.equal(cards.length, 7, `expected 7 project cards, found ${cards.length}`);
 });
 
 test("no project card is hidden behind a filter", () => {
-  // The filter used to hide cards by setting the `hidden` attribute. With six
+  // The filter used to hide cards by setting the `hidden` attribute. With seven
   // cards that span several disciplines, filtering by category hid real work
   // behind a click, so the grid is now static and nothing may be hidden.
   for (const card of cards) {
@@ -119,17 +119,18 @@ test("every card names the institution it was done at", () => {
   }
 });
 
-test("only the two public projects carry a link row", () => {
-  // The reactor paper links its DOI and the ski visualiser links its live demo
-  // and source. The other four are academic or internal work with nothing to
-  // link to, so they carry the institution note alone -- a dead button would be
-  // worse than no button.
+test("only the three public projects carry a link row", () => {
+  // The reactor paper links its DOI, the ski visualiser and the balloon tracker
+  // link their live demos and sources. The other four are academic or internal
+  // work with nothing to link to, so they carry the institution note alone --
+  // a dead button would be worse than no button.
   const withLink = cards.filter((c) => /class="project__links"/.test(c));
 
-  assert.equal(withLink.length, 2,
-    `expected 2 cards with links, found ${withLink.length}`);
+  assert.equal(withLink.length, 3,
+    `expected 3 cards with links, found ${withLink.length}`);
   assert.match(withLink[0], /project2/, "the DOI link row must be on the reactor card");
   assert.match(withLink[1], /project6/, "the demo link row must be on the ski visualiser card");
+  assert.match(withLink[2], /project7/, "the demo link row must be on the balloon tracker card");
 });
 
 test("the ski visualiser links to the deployed app, not a guessed path", () => {

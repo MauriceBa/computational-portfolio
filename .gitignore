@@ -9,3 +9,4 @@ slopes/ion-token.js
 
 # Tooling
 node_modules/
+__pycache__/

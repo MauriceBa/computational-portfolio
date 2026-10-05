@@ -1,0 +1,14 @@
+{
+  "generated": "2026-10-05T18:23:51.416064+00:00",
+  "shards": [
+    {
+      "file": "balloon_history.json",
+      "points": 32126,
+      "first": "2026-05-24T16:16:41.671925+00:00",
+      "last": "2026-10-05T18:23:50.352754+00:00"
+    }
+  ],
+  "history_points": 32126,
+  "tracks_points": 933,
+  "balloons": 18
+}
