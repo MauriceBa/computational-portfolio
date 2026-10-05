@@ -111,26 +111,46 @@ text replacement deletes them. A test enforces this; if you hit it, use
 
 ---
 
-## The five things you will want to change
+## What is still placeholder
 
-### 1. Name, role, availability
+The portfolio content is real. Four things are not, and all four are deliberate:
+
+1. **The postal address** in `impressum.html` and `datenschutz.html`
+   (`[Straße und Hausnummer]`, `[PLZ Ort]`, `[Telefonnummer]`). German law
+   requires a physical address in the Impressum, and inventing one would be worse
+   than leaving a visible marker.
+2. **`assets/pdf/resume_placeholder.pdf`** — the "Download CV" button points at a
+   generated placeholder. Replace it with your real CV under the same filename, or
+   change the `href`.
+3. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
+4. **`assets/img/og-image.png`** is a gradient with no text on it.
+
+Everything else is live content: name, role, availability, both about paragraphs,
+the four expertise cards, all three projects, and both research entries.
+
+Run this to confirm nothing was missed:
+
+```powershell
+Select-String -Path *.html, assets/js/i18n.js -Pattern '\[.+?\]'
+```
+
+`tests/placeholders.test.js` fails if a placeholder reappears outside the
+allowlist of the four items above.
+
+## Changing content
+
+### Name, role, availability
 
 `index.html`, Hero section: `hero.name`, `hero.role`, `hero.availability`,
 `hero.intro`. Then update the matching `I18N.en` / `I18N.fr` entries.
 
-### 2. Email address
+### Email address
 
-`[name@example.com]` appears in **five** places across four files, and missing one
-leaves a dead link or a form that sends nowhere. Search for it:
-
-```bash
-# macOS / Linux / Git Bash
-grep -rn "name@example.com" .
-```
+`contact@mauricebastard.de` appears in **five** places across four files, and
+missing one leaves a dead link or a form that sends nowhere. Search for it:
 
 ```powershell
-# Windows PowerShell
-Select-String -Path *.html, assets/js/main.js -Pattern "name@example.com"
+Select-String -Path *.html, assets/js/main.js -Pattern "contact@mauricebastard.de"
 ```
 
 | Location | What it is |
@@ -141,32 +161,17 @@ Select-String -Path *.html, assets/js/main.js -Pattern "name@example.com"
 | `datenschutz.html` → controller block | the controller address |
 | `datenschutz.html` → rights block | where data-subject requests go |
 
-### 3. GitHub and LinkedIn
+### GitHub and LinkedIn
 
-`[username]` appears eight times in `index.html`, and `[repo]` six more times:
+Two profile links, both in the contact section: `github.com/MauriceBa` and the
+LinkedIn profile. No project card links to a repository — the simulation work was
+done at Forschungszentrum Jülich and is not public, and a card pointing at a
+private or nonexistent repo reads worse than no link at all.
 
-- 6 × the repository and demo links of the three project cards
-  (`github.com/[username]/[repo]` and `[username].github.io/[repo]/`)
-- 1 × the GitHub link and 1 × the LinkedIn link in the contact section
+If you publish something later, add the link to that one card rather than to all
+three.
 
-Replace both placeholders wherever they appear:
-
-```bash
-# macOS / Linux / Git Bash
-grep -rn "\[username\]\|\[repo\]" .
-```
-
-```powershell
-# Windows PowerShell
-Select-String -Path *.html -Pattern '\[username\]|\[repo\]'
-```
-
-Every project link is a placeholder URL — replace them with your real repository
-and demo addresses, or remove the `demo` link entirely if a project has no public
-demo rather than shipping a link to a nonexistent page. Square brackets also make
-these URLs invalid to crawlers, which is the one thing holding SEO below 100.
-
-### 4. Projects
+### Projects
 
 Project cards are static markup in `index.html`, one `<article>` each. To add a
 fourth:
@@ -174,28 +179,30 @@ fourth:
 1. Copy an existing `<article class="card project" data-category="...">`.
 2. Give it a new `data-category` and point the image at a new SVG.
 3. Add `project4.*` keys to `I18N.en` and `I18N.fr` (`title`, `category`,
-   `problem`, `method`, `tag1`–`tag3`, `repo`, `demo`).
+   `problem`, `method`, `tag1`–`tag4`, plus `institution` if there is no link).
 4. If you introduce a **new category**, also add a matching
    `<button data-filter="...">` to `#project-filter`, or the card becomes
    unreachable — the test suite checks this.
 
-Categories in use: `simulation`, `optimization`, `web`. The `web` filter starts
-with no cards and shows an empty-state message; that is deliberate, and it is
-what proves the empty case works.
+Note the cards deliberately differ in their footer: project 2 has a DOI link,
+project 3 has nothing, and projects without public output carry a
+`project__note` naming the institution instead. That is honest — an empty link
+row or a dead button is worse than saying who the work was done with.
 
-### 5. Legal pages
-`impressum.html` and `datenschutz.html` are **placeholders only**. They are
-structured to show what belongs where (DDG § 5, DSGVO articles), but they are not
-legal advice and they are not compliant as written.
+### Legal pages
 
-**Have both pages reviewed by a lawyer before you publish.** German law requires
-a correct Impressum and a correct privacy policy, and getting either wrong carries
+`impressum.html` and `datenschutz.html` are **structurally complete but legally
+unreviewed**. They are organised around DDG § 5 and the GDPR articles, but that
+is a layout, not compliance.
+
+**Have both pages reviewed by a lawyer before you publish.** German law requires a
+correct Impressum and a correct privacy policy, and getting either wrong carries
 fines.
 
-The privacy page currently claims the site sets no cookies, loads no third-party
-content, and sends no data anywhere. That is true of this build — if you later add
+The privacy page states the site sets no cookies, loads no third-party content,
+and sends no data anywhere. That is true of this build — if you later add
 analytics, an embed, a font from a CDN, or a contact-form service, that statement
-becomes false and must be updated.
+becomes false and must be updated in the same change.
 
 ---
 
@@ -209,7 +216,7 @@ assets/css/style.css    design tokens, layout, components, responsive rules
 assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
 assets/img/             placeholder project SVGs, favicon, og-image.png
-assets/pdf/             placeholder PDFs: resume, thesis, report
+assets/pdf/             placeholder CV (resume_placeholder.pdf)
 tests/                  Node built-in test runner; never served
 docs/superpowers/       the design spec and implementation plan
 ```
@@ -286,14 +293,9 @@ after editing content.
 ## Before you publish
 
 - [ ] `node --test` passes
-- [ ] No `[` or `]` placeholders remain:
-      `Select-String -Path *.html, assets/js/i18n.js -Pattern '\[[A-Za-z0-9<]'`
-      (or `grep -rn "\[[A-Za-z0-9<]" *.html assets/js/i18n.js`) — it should report nothing
-- [ ] Name, email, and profile links updated everywhere (they appear in several places)
-- [ ] `assets/pdf/` holds your real CV, thesis and report — the three placeholder
-      files are `resume_placeholder.pdf`, `thesis_placeholder.pdf` and
-      `report_placeholder.pdf`
-- [ ] `assets/img/` holds real project screenshots
+- [ ] Only the four documented placeholders remain (see "What is still placeholder")
+- [ ] `assets/pdf/resume_placeholder.pdf` replaced with the real CV
+- [ ] `assets/img/` holds real project visuals
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true
 - [ ] `assets/img/og-image.png` replaced — it is an abstract placeholder with no text

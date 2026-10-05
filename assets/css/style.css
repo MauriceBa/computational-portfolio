@@ -701,6 +701,15 @@ a:hover {
   font-weight: 600;
 }
 
+/* Institutional attribution on work that has no public link. Sits in the footer
+ * slot so the card keeps its links-or-note aligned across the grid. */
+.project__note {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
 /* -- research -- */
 
 .entries {
@@ -730,6 +739,16 @@ a:hover {
 .entry__actions {
   margin: 0;
   margin-top: auto;
+}
+
+/* Stands in for a download button on work that cannot be shared, so the reader
+ * is told why there is no link rather than left wondering. */
+.entry__note {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  font-style: italic;
 }
 
 /* -- contact -- */

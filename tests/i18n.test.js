@@ -18,32 +18,24 @@ test("every dictionary value is a non-empty string", () => {
   }
 });
 
-test("content values mark their replaceable parts in square brackets", () => {
-  // The invariant is "a human can see what still needs replacing", not "the whole
-  // string is one placeholder". Composite values such as meta.title
-  // ("[First Last] - Computational Engineer") legitimately combine a placeholder
-  // with fixed chrome, so require at least one bracketed group.
-  //
-  // Interface chrome is exempt: it is copy the user never replaces. Spec Global
-  // Constraints allow exactly these — skip-link text, aria-label fallbacks, and
-  // fixed control labels. Nav item labels count as chrome too, since a site's
-  // section names are set once and are not "content still to be written".
-  const CHROME = new Set([
+test("no runtime or chrome string carries placeholder brackets", () => {
+  // Runtime strings and interface chrome are rendered verbatim: a bracket in a
+  // live region shows up on screen, and a bracket in an accessible name is read
+  // aloud. tests/placeholders.test.js covers the content side of this.
+  const MUST_BE_CLEAN = new Set([
     "nav.skip", "nav.label", "nav.menu", "nav.close",
     "nav.about", "nav.skills", "nav.projects", "nav.research", "nav.contact",
     "theme.toDark", "theme.toLight", "lang.label", "filter.label",
     "contact.github", "contact.linkedin",
-    // Rendered UI copy, not content: brackets here would show up in the live
-    // region as "[3 of 3 projects]".
     "filter.result",
-    // Read aloud by a screen reader on a failed submit.
     "contact.status"
   ]);
 
   for (const lang of ["en", "fr"]) {
-    for (const [key, value] of Object.entries(I18N[lang])) {
-      if (CHROME.has(key)) continue;
-      assert.match(value, /\[[^\]]+\]/, `${lang}.${key} contains no bracketed placeholder`);
+    for (const key of MUST_BE_CLEAN) {
+      const value = I18N[lang][key];
+      assert.equal(typeof value, "string", `I18N.${lang} is missing ${key}`);
+      assert.doesNotMatch(value, /[\[\]]/, `I18N.${lang}["${key}"] contains brackets: ${value}`);
     }
   }
 

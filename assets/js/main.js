@@ -451,7 +451,7 @@
           var message = (form.elements.message && form.elements.message.value) || "";
           var body = [name, subject, "", message].join("\n");
 
-          window.location.href = buildMailtoUrl("[name@example.com]", {
+          window.location.href = buildMailtoUrl("contact@mauricebastard.de", {
             subject: subject,
             body: body
           });
