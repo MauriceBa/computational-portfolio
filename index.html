@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="meta.title">[Vorname Nachname] — Computational Engineer</title>
+<meta name="description" data-i18n="meta.description" data-i18n-attr="content" content="[Portfolio eines angehenden Computational Engineers mit Schwerpunkt numerische Simulation und Scientific Computing.]">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+<meta property="og:title" content="[Vorname Nachname] — Computational Engineer">
+<meta property="og:description" content="[Portfolio eines angehenden Computational Engineers mit Schwerpunkt numerische Simulation und Scientific Computing.]">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/img/og-image.png">
+<script>
+/* Resolve the theme before first paint so the page never flashes the wrong one.
+   main.js is deferred and therefore not executed yet, so this deliberately
+   repeats resolveTheme()'s precedence rather than calling it. */
+(function () {
+  var stored = null;
+  try { stored = window.localStorage.getItem("portfolio-theme"); } catch (e) { stored = null; }
+  var value = typeof stored === "string" ? stored.trim().toLowerCase() : "";
+  var prefersDark = false;
+  try { prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; } catch (e) { prefersDark = false; }
+  document.documentElement.dataset.theme =
+    value === "dark" ? "dark" : value === "light" ? "light" : prefersDark ? "dark" : "light";
+})();
+</script>
+<script src="assets/js/i18n.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main" data-i18n="nav.skip">Zum Inhalt springen</a>
+
+<header id="site-header" class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__brand" href="#main">
+      <span aria-hidden="true">◈</span>
+      <span data-i18n="hero.name">[Vorname Nachname]</span>
+    </a>
+
+    <button id="nav-toggle" class="nav-toggle" type="button"
+            aria-expanded="false" aria-controls="nav-menu"
+            aria-label="Menü öffnen" data-i18n="nav.menu">
+      <span class="nav-toggle__bars" aria-hidden="true"></span>
+    </button>
+
+    <nav id="nav-menu" class="site-nav" data-i18n="nav.label" data-i18n-attr="aria-label" aria-label="Hauptnavigation">
+      <ul class="site-nav__list">
+        <li><a href="#about" data-i18n="nav.about">Über mich</a></li>
+        <li><a href="#skills" data-i18n="nav.skills">Kernkompetenzen</a></li>
+        <li><a href="#projects" data-i18n="nav.projects">Projekte</a></li>
+        <li><a href="#research" data-i18n="nav.research">Forschung</a></li>
+        <li><a href="#contact" data-i18n="nav.contact">Kontakt</a></li>
+      </ul>
+    </nav>
+
+    <div class="site-header__controls">
+      <div id="lang-group" class="lang-group" role="group" data-i18n="lang.label" data-i18n-attr="aria-label" aria-label="Sprache">
+        <button type="button" data-lang="de" aria-pressed="true" lang="de">DE</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+        <button type="button" data-lang="fr" aria-pressed="false" lang="fr">FR</button>
+      </div>
+
+      <button id="theme-toggle" class="theme-toggle" type="button"
+              aria-pressed="false" aria-label="Zum dunklen Modus wechseln"
+              data-i18n="theme.toDark">
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="main" tabindex="-1">
+
+  <!-- ============================== HERO ============================== -->
+  <section id="hero" class="section hero" aria-labelledby="hero-heading">
+    <div class="hero__backdrop" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <p class="hero__availability">
+        <span class="dot" aria-hidden="true"></span>
+        <span data-i18n="hero.availability">[Verfügbar ab Monat Jahr]</span>
+      </p>
+      <h1 id="hero-heading" class="hero__name" data-i18n="hero.name">[Vorname Nachname]</h1>
+      <p class="hero__role" data-i18n="hero.role">[Computational Engineer | Numerical Simulation &amp; Scientific Computing]</p>
+      <p class="hero__intro" data-i18n="hero.intro">[Ein kurzer Satz dazu, was ich baue und womit.]</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#projects" data-i18n="hero.cta.projects">[Projekte ansehen]</a>
+        <a class="btn btn--ghost" href="#contact" data-i18n="hero.cta.contact">[Kontakt aufnehmen]</a>
+        <a class="btn btn--quiet" href="assets/pdf/resume_placeholder.pdf" download
+           data-i18n="hero.cta.resume">[Lebenslauf herunterladen]</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ÜBER MICH ============================ -->
+  <section id="about" class="section" aria-labelledby="about-heading">
+    <div class="container">
+      <h2 id="about-heading" class="section__title" data-i18n="about.heading">[Über mich]</h2>
+      <div class="about">
+        <div class="about__text">
+          <p data-i18n="about.p1">[Studium, Schwerpunkte, theoretische Grundlagen.]</p>
+          <p data-i18n="about.p2">[Praktische Methoden, Werkzeuge, Erfahrung.]</p>
+        </div>
+        <ul class="stats">
+          <li class="stats__item" data-i18n="about.stat1">[X] Jahre Erfahrung</li>
+          <li class="stats__item" data-i18n="about.stat2">[Y] Projekte</li>
+          <li class="stats__item" data-i18n="about.stat3">[Z] Simulationen</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= KERNKOMPETENZEN ======================= -->
+  <section id="skills" class="section section--alt" aria-labelledby="skills-heading">
+    <div class="container">
+      <h2 id="skills-heading" class="section__title" data-i18n="skills.simulation.title">Kernkompetenzen</h2>
+
+      <div class="cards cards--4">
+        <article class="card skill">
+          <h3 class="skill__title" data-i18n="skills.simulation.title">[Simulationsmethoden]</h3>
+          <svg class="skill__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 20c4-10 7-14 9-14s5 4 9 14M6.5 20c2.5-6 4-8.5 5.5-8.5S15 14 17.5 20"
+                  fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <p class="skill__desc" data-i18n="skills.simulation.desc">[Eine Zeile dazu, wie ich physikalische Probleme modelliere und löse.]</p>
+          <ul class="badges">
+            <li class="badge" data-i18n="skills.simulation.tag1">[Methode der finiten Elemente]</li>
+            <li class="badge" data-i18n="skills.simulation.tag2">[CFD]</li>
+            <li class="badge" data-i18n="skills.simulation.tag3">[FEM/FVM]</li>
+            <li class="badge" data-i18n="skills.simulation.tag4">[Numerische Integration]</li>
+          </ul>
+        </article>
+
+        <article class="card skill">
+          <h3 class="skill__title" data-i18n="skills.languages.title">[Programmiersprachen]</h3>
+          <svg class="skill__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9 18l-5-6 5-6M15 6l5 6-5 6" fill="none" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="skill__desc" data-i18n="skills.languages.desc">[Eine Zeile dazu, wie ich aus Modellen lauffähigen Code mache.]</p>
+          <ul class="badges">
+            <li class="badge" data-i18n="skills.languages.tag1">[Python]</li>
+            <li class="badge" data-i18n="skills.languages.tag2">[C++]</li>
+            <li class="badge" data-i18n="skills.languages.tag3">[MATLAB]</li>
+            <li class="badge" data-i18n="skills.languages.tag4">[SQL]</li>
+          </ul>
+        </article>
+
+        <article class="card skill">
+          <h3 class="skill__title" data-i18n="skills.tools.title">[Software &amp; Werkzeuge]</h3>
+          <svg class="skill__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M14.5 5.5a4 4 0 00-5.2 5.2L4 16v4h4l5.3-5.3a4 4 0 005.2-5.2l-2.4 2.4-2.6-.6-.6-2.6z"
+                  fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="skill__desc" data-i18n="skills.tools.desc">[Eine Zeile dazu, in welchen Umgebungen ich arbeite.]</p>
+          <ul class="badges">
+            <li class="badge" data-i18n="skills.tools.tag1">[OpenFOAM]</li>
+            <li class="badge" data-i18n="skills.tools.tag2">[Ansys]</li>
+            <li class="badge" data-i18n="skills.tools.tag3">[Git]</li>
+            <li class="badge" data-i18n="skills.tools.tag4">[Docker]</li>
+            <li class="badge" data-i18n="skills.tools.tag5">[CI/CD]</li>
+          </ul>
+        </article>
+
+        <article class="card skill">
+          <h3 class="skill__title" data-i18n="skills.vcs.title">[Versionsverwaltung]</h3>
+          <svg class="skill__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="7" cy="5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="7" cy="19" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="17" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 7.4v9.2M9.4 5.6a8 8 0 017.3 4.7M9.4 18.4a8 8 0 007.3-4.7"
+                  fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <p class="skill__desc" data-i18n="skills.vcs.desc">[Eine Zeile dazu, wie ich Arbeit nachvollziehbar und reproduzierbar halte.]</p>
+          <ul class="badges">
+            <li class="badge" data-i18n="skills.vcs.tag1">[Git]</li>
+            <li class="badge" data-i18n="skills.vcs.tag2">[GitHub Actions]</li>
+            <li class="badge" data-i18n="skills.vcs.tag3">[Semantic Versioning]</li>
+            <li class="badge" data-i18n="skills.vcs.tag4">[Code-Review]</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ PROJEKTE ============================ -->
+  <section id="projects" class="section" aria-labelledby="projects-heading">
+    <div class="container">
+      <h2 id="projects-heading" class="section__title" data-i18n="projects.heading">[Projekte]</h2>
+
+      <div id="project-filter" class="filter" role="group"
+           data-i18n="filter.label" data-i18n-attr="aria-label" aria-label="[Projekte nach Kategorie filtern]">
+        <button type="button" class="filter__btn" data-filter="all" aria-pressed="true" data-i18n="filter.all">[Alle]</button>
+        <button type="button" class="filter__btn" data-filter="simulation" aria-pressed="false" data-i18n="filter.simulation">[Simulation]</button>
+        <button type="button" class="filter__btn" data-filter="optimization" aria-pressed="false" data-i18n="filter.optimization">[Optimierung]</button>
+        <button type="button" class="filter__btn" data-filter="web" aria-pressed="false" data-i18n="filter.web">[Webentwicklung]</button>
+      </div>
+
+      <p id="filter-status" class="visually-hidden" aria-live="polite">3 von 3 Projekten</p>
+
+      <div id="project-grid" class="cards cards--3">
+
+        <article class="card project" data-category="simulation">
+          <img class="project__media" src="assets/img/project-1.svg" alt="" loading="lazy" width="800" height="450">
+          <div class="project__body">
+            <p class="project__category" data-i18n="project1.category">[Simulation]</p>
+            <h3 class="project__title" data-i18n="project1.title">[Projekt 1: Titel]</h3>
+            <p class="project__text" data-i18n="project1.problem">[Welches Problem wurde gelöst?]</p>
+            <p class="project__text" data-i18n="project1.method">[Verwendete Methodik]</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project1.tag1">[Python]</li>
+              <li class="badge" data-i18n="project1.tag2">[NumPy]</li>
+              <li class="badge" data-i18n="project1.tag3">[VTK]</li>
+            </ul>
+            <p class="project__links">
+              <a href="https://github.com/[username]/[repo]" target="_blank" rel="noopener noreferrer" data-i18n="project1.repo">[Repository ansehen]</a>
+              <a href="https://[username].github.io/[repo]/" target="_blank" rel="noopener noreferrer" data-i18n="project1.demo">[Live-Demo ansehen]</a>
+            </p>
+          </div>
+        </article>
+
+        <article class="card project" data-category="simulation">
+          <img class="project__media" src="assets/img/project-2.svg" alt="" loading="lazy" width="800" height="450">
+          <div class="project__body">
+            <p class="project__category" data-i18n="project2.category">[Simulation]</p>
+            <h3 class="project__title" data-i18n="project2.title">[Projekt 2: Titel]</h3>
+            <p class="project__text" data-i18n="project2.problem">[Welches Problem wurde gelöst?]</p>
+            <p class="project__text" data-i18n="project2.method">[Verwendete Methodik]</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project2.tag1">[C++]</li>
+              <li class="badge" data-i18n="project2.tag2">[OpenFOAM]</li>
+              <li class="badge" data-i18n="project2.tag3">[ParaView]</li>
+            </ul>
+            <p class="project__links">
+              <a href="https://github.com/[username]/[repo]" target="_blank" rel="noopener noreferrer" data-i18n="project2.repo">[Repository ansehen]</a>
+              <a href="https://[username].github.io/[repo]/" target="_blank" rel="noopener noreferrer" data-i18n="project2.demo">[Live-Demo ansehen]</a>
+            </p>
+          </div>
+        </article>
+
+        <article class="card project" data-category="optimization">
+          <img class="project__media" src="assets/img/project-3.svg" alt="" loading="lazy" width="800" height="450">
+          <div class="project__body">
+            <p class="project__category" data-i18n="project3.category">[Optimierung]</p>
+            <h3 class="project__title" data-i18n="project3.title">[Projekt 3: Titel]</h3>
+            <p class="project__text" data-i18n="project3.problem">[Welches Problem wurde gelöst?]</p>
+            <p class="project__text" data-i18n="project3.method">[Verwendete Methodik]</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project3.tag1">[Python]</li>
+              <li class="badge" data-i18n="project3.tag2">[SciPy]</li>
+              <li class="badge" data-i18n="project3.tag3">[JAX]</li>
+            </ul>
+            <p class="project__links">
+              <a href="https://github.com/[username]/[repo]" target="_blank" rel="noopener noreferrer" data-i18n="project3.repo">[Repository ansehen]</a>
+              <a href="https://[username].github.io/[repo]/" target="_blank" rel="noopener noreferrer" data-i18n="project3.demo">[Live-Demo ansehen]</a>
+            </p>
+          </div>
+        </article>
+
+      </div>
+
+      <p id="filter-empty" class="filter-empty" hidden data-i18n="filter.empty">[In dieser Kategorie gibt es noch keine Projekte.]</p>
+    </div>
+  </section>
+
+  <!-- ==================== FORSCHUNG & VERÖFFENTLICHUNGEN ==================== -->
+  <section id="research" class="section section--alt" aria-labelledby="research-heading">
+    <div class="container">
+      <h2 id="research-heading" class="section__title" data-i18n="research.heading">[Forschung &amp; Veröffentlichungen]</h2>
+
+      <div class="entries">
+        <article class="card entry">
+          <h3 class="entry__title" data-i18n="research.1.title">[Titel der Abschlussarbeit]</h3>
+          <p class="entry__meta" data-i18n="research.1.meta">[Hochschule] · [Jahr]</p>
+          <p class="entry__abstract" data-i18n="research.1.abstract">[Kurzfassung, etwa 40 Wörter.]</p>
+          <p class="entry__actions">
+            <a class="btn btn--quiet" href="assets/pdf/thesis_placeholder.pdf" download
+               data-i18n="research.1.download">[PDF herunterladen]</a>
+          </p>
+        </article>
+
+        <article class="card entry">
+          <h3 class="entry__title" data-i18n="research.2.title">[Titel des Berichts]</h3>
+          <p class="entry__meta" data-i18n="research.2.meta">[Herausgeber] · [Jahr]</p>
+          <p class="entry__abstract" data-i18n="research.2.abstract">[Kurzfassung, etwa 40 Wörter.]</p>
+          <p class="entry__actions">
+            <a class="btn btn--quiet" href="assets/pdf/thesis_placeholder.pdf" download
+               data-i18n="research.2.download">[PDF herunterladen]</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= KONTAKT ============================= -->
+  <section id="contact" class="section" aria-labelledby="contact-heading">
+    <div class="container">
+      <h2 id="contact-heading" class="section__title" data-i18n="contact.heading">[Kontakt]</h2>
+      <p class="contact__lead" data-i18n="contact.lead">[Am einfachsten erreichbar ich per E-Mail.]</p>
+
+      <div class="contact">
+        <div class="contact__aside">
+          <a id="contact-mailto" class="btn btn--primary"
+             href="mailto:[name@example.com]" data-i18n="contact.emailBtn">[E-Mail schreiben]</a>
+          <p class="contact__social">
+            <a href="https://github.com/[username]" target="_blank" rel="noopener noreferrer" data-i18n="contact.github">GitHub</a>
+            <a href="https://linkedin.com/in/[username]" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin">LinkedIn</a>
+          </p>
+        </div>
+
+        <form id="contact-form" class="contact__form" novalidate>
+          <div class="field">
+            <label for="contact-name" data-i18n="contact.name">[Dein Name]</label>
+            <input id="contact-name" name="name" type="text" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="contact-subject" data-i18n="contact.subject">[Betreff]</label>
+            <input id="contact-subject" name="subject" type="text" required>
+          </div>
+          <div class="field">
+            <label for="contact-message" data-i18n="contact.message">[Deine Nachricht]</label>
+            <textarea id="contact-message" name="message" rows="5" required></textarea>
+          </div>
+          <button class="btn btn--primary" type="submit" data-i18n="contact.submit">[Nachricht per E-Mail vorbereiten]</button>
+          <p id="contact-status" class="visually-hidden" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="site-footer__copy" data-i18n="footer.copyright">[© 2026 [Vorname Nachname]]</p>
+    <nav class="site-footer__nav" aria-label="Rechtliches">
+      <a href="impressum.html" data-i18n="footer.imprint">[Impressum]</a>
+      <a href="datenschutz.html" data-i18n="footer.privacy">[Datenschutzerklärung]</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

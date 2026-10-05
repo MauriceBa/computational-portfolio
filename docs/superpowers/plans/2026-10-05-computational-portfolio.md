@@ -659,7 +659,12 @@ git commit -m "feat: add placeholder Impressum and Datenschutzerklärung pages"
 Using `node:fs` and `node:path` with `path.join(__dirname, '..')` as the repo root. Assert:
 
 1. Every `data-i18n="..."` value extracted from `index.html` exists in **both** `I18N.en` and `I18N.fr`.
-2. Every `I18N.en` key is used somewhere in `index.html` (no dead keys).
+2. Every `I18N.en` key is used somewhere in `index.html` **or** is in the documented
+   `RUNTIME_ONLY_KEYS` set. Those four keys are written by `main.js` at runtime and have
+   no markup to hang off, so requiring an HTML reference would be wrong:
+   `filter.result` (contains `{count}`/`{total}`, so JS owns it or braces leak into the
+   live region), `theme.toLight` and `nav.close` (only exist while toggled), and
+   `contact.status` (the live region is empty until a failed submit).
 3. Every `data-category` value in `index.html` has a matching `[data-filter="..."]` button.
 4. Exactly one `<h1>` exists in `index.html`.
 5. Every `id` referenced by a `for=` attribute and every `href="#..."` has a matching element `id`.
