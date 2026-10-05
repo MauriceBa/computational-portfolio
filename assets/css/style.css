@@ -243,6 +243,16 @@ a:hover {
   background: color-mix(in srgb, var(--color-accent) 85%, black);
 }
 
+/* ponytail: temporarily disabled contact buttons (mailto broken);
+   drop .is-disabled / the disabled attribute to restore */
+.btn.is-disabled,
+.btn:disabled {
+  opacity: 0.45;
+  filter: grayscale(1);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .btn--ghost {
   border-color: var(--color-border);
   background: transparent;
