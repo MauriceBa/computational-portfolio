@@ -117,9 +117,8 @@ The text content is complete: **zero square-bracket placeholders remain** on any
 page, and `tests/placeholders.test.js` enforces that. Two binary assets are still
 generated stand-ins:
 
-1. **Two of the six project images** are still SVG placeholders:
-   `project-1.svg` (catalyst pellets) and `project-3.svg` (ski visualiser). The
-   other four are real.
+1. **One of the six project images** is still an SVG placeholder:
+   `project-3.svg` (ski visualiser). The other five are real.
 2. **`assets/img/og-image.png`** is a gradient with no text on it.
 
 Check for yourself:
@@ -344,7 +343,7 @@ after editing content.
       clean; verify with
       `Select-String -Path index.html, impressum.html, datenschutz.html, assets/js/i18n.js -Pattern '\[.+?\]'`
       — leave this README out of the search, it contains bracketed examples
-- [ ] `project-1.svg` and `project-3.svg` replaced with real project images
+- [ ] `project-3.svg` replaced with a real project image
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true
 - [ ] `assets/img/og-image.png` replaced — it is an abstract placeholder with no text

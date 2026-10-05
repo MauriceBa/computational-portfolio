@@ -110,12 +110,37 @@ test("the published project links to exactly one real paper", () => {
 
 test("every card names the institution it was done at", () => {
   // Attribution is the only provenance shown on cards without a public link, so
-  // every card needs one. The reactor card additionally carries a DOI link.
+  // every card needs one. Cards that do have links carry both.
   for (const card of cards) {
     assert.match(card, /class="project__note"/, "a card has no institution note");
   }
+});
 
+test("only the two public projects carry a link row", () => {
+  // The reactor paper links its DOI and the ski visualiser links its live demo
+  // and source. The other four are academic or internal work with nothing to
+  // link to, so they carry the institution note alone -- a dead button would be
+  // worse than no button.
   const withLink = cards.filter((c) => /class="project__links"/.test(c));
-  assert.equal(withLink.length, 1, "exactly the reactor paper should carry a link row");
-  assert.match(withLink[0], /project2/, "the link row must be on the reactor card");
+
+  assert.equal(withLink.length, 2,
+    `expected 2 cards with links, found ${withLink.length}`);
+  assert.match(withLink[0], /project2/, "the DOI link row must be on the reactor card");
+  assert.match(withLink[1], /project6/, "the demo link row must be on the ski visualiser card");
+});
+
+test("the ski visualiser links to the deployed app, not a guessed path", () => {
+  const ski = cards.find((c) => c.includes("project6"));
+  assert.ok(ski, "the ski visualiser card is missing");
+
+  // Root-relative, so it resolves at the custom domain rather than breaking under
+  // a project-page subpath.
+  assert.match(ski, /href="\/slopes\/"/);
+  assert.match(ski, /href="https:\/\/github\.com\/MauriceBa\/VPS_Coding\/tree\/main\/slopes"/);
+
+  // Both links need the same protection as every other external link on the site.
+  for (const tag of ski.match(/<a\b[^>]*>/g) || []) {
+    assert.match(tag, /rel="[^"]*noopener/);
+    assert.match(tag, /rel="[^"]*noreferrer/);
+  }
 });
