@@ -17,9 +17,25 @@
     return prefersDark ? "dark" : "light";
   }
 
+  function buildMailtoUrl(email, fields) {
+    var subject = fields && typeof fields.subject === "string" ? fields.subject : "";
+    var body = fields && typeof fields.body === "string" ? fields.body : "";
+
+    if (subject === "" && body === "") {
+      return "mailto:" + email;
+    }
+
+    return (
+      "mailto:" + email +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body)
+    );
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
-    resolveTheme: resolveTheme
+    resolveTheme: resolveTheme,
+    buildMailtoUrl: buildMailtoUrl
   };
 
   // --- module guard (Node tests) ---
