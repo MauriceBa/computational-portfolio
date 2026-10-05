@@ -76,6 +76,10 @@ test("the viewer reuses the shared Ion token setup instead of embedding a token"
     "viewer creation is not wrapped, so a Cesium failure kills the 3D tab");
   assert.equal(/fromRgb\(/.test(app), false,
     "Cesium.Color.fromRgb does not exist and throws inside render3D");
+  assert.match(app, /Cesium\.Material\.fromType\("Color"/,
+    "PolylineCollection needs a Material instance, not a bare Color");
+  assert.equal(/material:\s*cesiumColor\(/.test(app), false,
+    "a direct Color is still assigned as polyline material");
 
   // The deploy workflow must place the token next to *this* app as well.
   const deploy = fs.readFileSync(path.join(ROOT, ".github", "workflows", "deploy.yml"), "utf8");

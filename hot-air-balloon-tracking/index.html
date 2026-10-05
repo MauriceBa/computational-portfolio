@@ -454,7 +454,11 @@
           state.cesiumPaths.add({
             positions: run.pts.map((p) => Cesium.Cartesian3.fromDegrees(p.lon, p.lat, Math.max(p.altM, 0))),
             width: 4,
-            material: cesiumColor(ALT_STOPS[run.b][0])
+            /* PolylineCollection wants a Material instance -- a bare Color
+               crashes updateShader (reading 'search'). */
+            material: Cesium.Material.fromType("Color", {
+              color: cesiumColor(ALT_STOPS[run.b][0])
+            })
           });
         }
         for (const p of pts) {
