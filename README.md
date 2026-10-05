@@ -117,7 +117,9 @@ The text content is complete: **zero square-bracket placeholders remain** on any
 page, and `tests/placeholders.test.js` enforces that. Two binary assets are still
 generated stand-ins:
 
-1. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
+1. **Two of the six project images** are still SVG placeholders:
+   `project-1.svg` (catalyst pellets) and `project-3.svg` (ski visualiser). The
+   other four are real.
 2. **`assets/img/og-image.png`** is a gradient with no text on it.
 
 Check for yourself:
@@ -210,21 +212,29 @@ three.
 
 ### Projects
 
-Project cards are static markup in `index.html`, one `<article>` each. To add a
-fourth:
+There are six project cards, all visible at once — no filter. The category
+filter was removed because with six cards across CFD, optimisation, computer
+vision and web work, it hid real projects behind a click rather than helping
+anyone find anything.
 
-1. Copy an existing `<article class="card project" data-category="...">`.
-2. Give it a new `data-category` and point the image at a new SVG.
-3. Add `project4.*` keys to `I18N.en` and `I18N.fr` (`title`, `category`,
-   `problem`, `method`, `tag1`–`tag4`, plus `institution` if there is no link).
-4. If you introduce a **new category**, also add a matching
-   `<button data-filter="...">` to `#project-filter`, or the card becomes
-   unreachable — the test suite checks this.
+To add a seventh:
 
-Note the cards deliberately differ in their footer: project 2 has a DOI link,
-project 3 has nothing, and projects without public output carry a
-`project__note` naming the institution instead. That is honest — an empty link
-row or a dead button is worse than saying who the work was done with.
+1. Copy an existing `<article class="card project">`.
+2. Point its `<img>` at an image. Keep `loading="lazy"` and set `width`/`height`,
+   or the grid shifts as images arrive.
+3. Add `project7.*` keys to `I18N.en` and `I18N.fr`: `title`, `text`,
+   `institution`, and `tag1`–`tag4`.
+4. Run `node --test`. `tests/projects.test.js` checks the card count, that every
+   media file exists, and that each card's keys resolve in both languages.
+
+The cards deliberately differ in their footer. The reactor paper ends with a DOI
+link; every other card ends with a `project__note` naming the institution the
+work was done at. An empty link row or a dead button is worse than saying who
+you worked with, so internal work is labelled rather than linked.
+
+`project__media` uses a fixed `16 / 9` box with `object-fit: cover`. That is why
+the six images may have very different aspect ratios — 1:1 for the YOLO still,
+1.87 for the race-simulation screenshot — without the card tops going ragged.
 
 ### Legal pages
 
@@ -252,7 +262,7 @@ datenschutz.html        placeholder privacy policy (German only)
 assets/css/style.css    design tokens, layout, components, responsive rules
 assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
-assets/img/             placeholder project SVGs, favicon, og-image.png
+assets/img/             six project images, favicon.svg, og-image.png
 assets/pdf/             your CV, one file per language (CV_DE/EN/FR_Maurice_Bastard.pdf)
 tests/                  Node built-in test runner; never served
 docs/superpowers/       the design spec and implementation plan
@@ -295,8 +305,8 @@ and nothing to license.
 | --- | --- | --- |
 | Theme toggle | `#theme-toggle` | persists in `localStorage` under `portfolio-theme`; resolved before first paint so there is no flash |
 | Language switch | `#lang-group` | persists under `portfolio-lang`; also sets `<html lang>` |
-| Project filter | `#project-filter` | real buttons with `aria-pressed`; hides cards with the `hidden` attribute so they leave the accessibility tree; announces the count in a live region |
 | Mobile nav | `#nav-toggle` | below 864 px; sets `inert` on `<main>` and `<footer>` so Tab cannot reach the content behind an open menu; Escape closes it; the menu auto-closes if the viewport crosses into the wide layout |
+| Project grid | `#project-grid` | six cards, always all visible; no filter |
 | Scroll spy | header nav | `IntersectionObserver`; marks the active link with `aria-current` |
 | Contact form | `#contact-form` | **has no backend.** GitHub Pages cannot receive submissions, so it opens the visitor's mail client via `mailto:`. Nothing is sent or stored. |
 
@@ -311,7 +321,7 @@ device and are described in the privacy page. Clearing site data removes them.
 
 - Semantic landmarks, one `h1` per page, heading levels that never skip.
 - Full keyboard operation, visible focus rings, `aria-pressed` on all toggles.
-- Status changes (filter counts, validation failures) go through `aria-live`.
+- Status changes (validation failures) go through `aria-live`.
 - `prefers-reduced-motion` and `prefers-contrast: more` are both honoured.
 - With JavaScript disabled the site still renders completely in German, all three
   project cards are present, and the in-page navigation stays reachable at every
@@ -334,7 +344,7 @@ after editing content.
       clean; verify with
       `Select-String -Path index.html, impressum.html, datenschutz.html, assets/js/i18n.js -Pattern '\[.+?\]'`
       — leave this README out of the search, it contains bracketed examples
-- [ ] `assets/img/` holds real project visuals
+- [ ] `project-1.svg` and `project-3.svg` replaced with real project images
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true
 - [ ] `assets/img/og-image.png` replaced — it is an abstract placeholder with no text

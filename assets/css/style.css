@@ -601,53 +601,6 @@ a:hover {
   padding-top: var(--space-2);
 }
 
-/* -- filter -- */
-
-.filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
-}
-
-.filter__btn {
-  padding: 0.45em 1em;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color var(--speed) ease, color var(--speed) ease,
-    border-color var(--speed) ease;
-}
-
-.filter__btn:hover {
-  background: var(--color-surface);
-}
-
-.filter__btn[aria-pressed="true"] {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: var(--color-accent-contrast);
-  font-weight: 700;
-}
-
-.filter__btn[aria-pressed="true"]::after {
-  content: " ✓";
-}
-
-.filter-empty {
-  margin-top: var(--space-5);
-  padding: var(--space-5);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-muted);
-  text-align: center;
-}
-
 [hidden] {
   display: none !important;
 }
@@ -662,7 +615,11 @@ a:hover {
 .project__media {
   width: 100%;
   aspect-ratio: 16 / 9;
+  /* The six cards mix real photographs (1:1, 1.26, 1.87) with the SVG
+   * placeholders (16:9). A fixed box plus cover keeps the row aligned whatever
+   * the source aspect ratio is, instead of leaving ragged card tops. */
   object-fit: cover;
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-hairline);
 }
 
@@ -676,14 +633,6 @@ a:hover {
 
 .project__body p {
   margin: 0;
-}
-
-.project__category {
-  color: var(--color-accent);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .project__text {

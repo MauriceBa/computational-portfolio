@@ -58,32 +58,6 @@
     return written;
   }
 
-  function cardMatchesCategory(cardCategory, activeCategory) {
-    return activeCategory === "all" || cardCategory === activeCategory;
-  }
-
-  function formatFilterResult(template, count, total) {
-    if (typeof template !== "string" || template === "") {
-      return "";
-    }
-
-    return template
-      .split("{count}").join(String(count))
-      .split("{total}").join(String(total));
-  }
-
-  /* The filter-status template lives in the markup for German (Approach A: the
-   * German text is the static source of truth, and there is deliberately no de
-   * dictionary), so an active EN/FR dictionary is tried first and the markup's
-   * own template is the fallback. Without this the live region reads empty in
-   * German. */
-  function pickFilterTemplate(activeDict, domTemplate) {
-    var value = activeDict && activeDict["filter.result"];
-    if (typeof value === "string" && value !== "") return value;
-    if (typeof domTemplate === "string" && domTemplate !== "") return domTemplate;
-    return "";
-  }
-
   /* An open menu makes <main> and <footer> inert, and the only control that
    * clears that is #nav-toggle -- which is display:none above the breakpoint.
    * So crossing into the wide state while the menu is open would leave the whole
@@ -118,10 +92,7 @@
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
     buildMailtoUrl: buildMailtoUrl,
-    translateDocument: translateDocument,
-    cardMatchesCategory: cardMatchesCategory,
-    formatFilterResult: formatFilterResult,
-    pickFilterTemplate: pickFilterTemplate,
+    translateDocument: translateDocument,
     shouldResetNav: shouldResetNav,
     cvPath: cvPath,
     cvDownloadName: cvDownloadName
@@ -136,7 +107,7 @@
   // --- DOM wiring ---
   //
   // Every lookup is guarded. The two legal pages share this file but have no
-  // language group, nav menu, filter, or form, so a missing element is normal
+  // language group, nav menu, or form, so a missing element is normal
   // rather than exceptional.
 
   if (typeof document !== "undefined") {
@@ -219,8 +190,7 @@
         }
 
         updateThemeLabel();
-        updateCvLink();
-        applyFilter(activeFilter);
+        updateCvLink();
       }
 
       /* ------------------------- theme ------------------------- */
@@ -409,64 +379,6 @@
         });
       }
 
-      /* ------------------------ project filter ------------------------ */
-
-      var filterButtons = doc.querySelectorAll("[data-filter]");
-      var cards = doc.querySelectorAll("#project-grid [data-category]");
-      var filterStatus = doc.getElementById("filter-status");
-      var filterEmpty = doc.getElementById("filter-empty");
-      var activeFilter = "all";
-
-      function applyFilter(category) {
-        if (!filterButtons.length) return;
-        activeFilter = category;
-
-        var visibleCount = 0;
-        for (var i = 0; i < cards.length; i++) {
-          var card = cards[i];
-          var match = cardMatchesCategory(card.getAttribute("data-category"), category);
-          if (match) {
-            card.removeAttribute("hidden");
-            visibleCount += 1;
-          } else {
-            card.setAttribute("hidden", "");
-          }
-        }
-
-        for (var b = 0; b < filterButtons.length; b++) {
-          filterButtons[b].setAttribute(
-            "aria-pressed",
-            filterButtons[b].getAttribute("data-filter") === category ? "true" : "false"
-          );
-        }
-
-        if (filterStatus) {
-          filterStatus.textContent = formatFilterResult(
-            pickFilterTemplate(dict(), filterStatus.getAttribute("data-count-template")),
-            visibleCount,
-            cards.length
-          );
-        }
-
-        if (filterEmpty) {
-          if (visibleCount === 0) filterEmpty.removeAttribute("hidden");
-          else filterEmpty.setAttribute("hidden", "");
-        }
-      }
-
-      for (var fb = 0; fb < filterButtons.length; fb++) {
-        filterButtons[fb].addEventListener("click", function (event) {
-          applyFilter(event.currentTarget.getAttribute("data-filter"));
-        });
-      }
-
-      /* Runs on boot too, so the live region never shows a raw {count} template. */
-      applyFilter("all");
-
-      /* ------------------------ contact form ------------------------ */
-
-
-
       var form = doc.getElementById("contact-form");
       var contactStatus = doc.getElementById("contact-status");
 
@@ -526,13 +438,10 @@
 
       /* --------------------------- boot --------------------------- */
       //
-      // Last, so every element and function the language and filter paths touch
-      // already exists. Calling setLanguage earlier would run applyFilter with an
-      // uninitialised activeFilter and hide every card.
+      // Last, so every element the language path touches already exists.
 
       var storedLang = readPref(STORAGE_KEYS.lang);
-      setLanguage(["de", "en", "fr"].indexOf(storedLang) === -1 ? "de" : storedLang);
-      applyFilter(activeFilter);
+      setLanguage(["de", "en", "fr"].indexOf(storedLang) === -1 ? "de" : storedLang);
     });
   }
 })();

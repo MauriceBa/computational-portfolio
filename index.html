@@ -215,47 +215,33 @@ document.documentElement.classList.add("js");
   </section>
 
   <!-- ============================ PROJEKTE ============================ -->
-  <section id="projects" class="section" aria-labelledby="projects-heading">
+<section id="projects" class="section" aria-labelledby="projects-heading">
     <div class="container">
       <h2 id="projects-heading" class="section__title" data-i18n="projects.heading">Projekte</h2>
 
-      <div id="project-filter" class="filter" role="group"
-           data-i18n="filter.label" data-i18n-attr="aria-label" aria-label="Projekte nach Kategorie filtern">
-        <button type="button" class="filter__btn" data-filter="all" aria-pressed="true" data-i18n="filter.all">Alle</button>
-        <button type="button" class="filter__btn" data-filter="simulation" aria-pressed="false" data-i18n="filter.simulation">Simulation</button>
-        <button type="button" class="filter__btn" data-filter="optimization" aria-pressed="false" data-i18n="filter.optimization">Optimierung</button>
-        <button type="button" class="filter__btn" data-filter="web" aria-pressed="false" data-i18n="filter.web">Webentwicklung</button>
-      </div>
-
-      <p id="filter-status" class="visually-hidden" aria-live="polite"
-         data-count-template="{count} von {total} Projekten">3 von 3 Projekten</p>
-
       <div id="project-grid" class="cards cards--3">
 
-        <article class="card project" data-category="optimization">
+        <article class="card project">
           <img class="project__media" src="assets/img/project-1.svg" alt="" loading="lazy" width="800" height="450">
           <div class="project__body">
-            <p class="project__category" data-i18n="project1.category">Optimierung</p>
-            <h3 data-i18n="project1.title">In-Silico-Formoptimierung von Katalysatorpellets</h3>
-            <p class="project__text" data-i18n="project1.problem">Die Pelletgeometrie bestimmt sowohl Druckverlust als auch Reaktivität – und beide Ziele ziehen gegeneinander.</p>
-            <p class="project__text" data-i18n="project1.method">Mehrziel-evolutionäre Optimierung (NSGA-II) gekoppelt an physikalische Schüttungsgeometrie-Simulationen, gesteuert über eine PyGMO-Suche auf den Geometrieparametern.</p>
+            <h3 data-i18n="project1.title">In-Silico Formoptimierung von Katalysator-Pellets</h3>
+            <p class="project__text" data-i18n="project1.text">Automatisierte 3D-Geometrieerzeugung (Blender/Python), gekoppelt an Schüttungsgeometrie-Simulationen und multikriterielle Optimierung (NSGA-II) zur Reduktion von Druckverlusten bei gleichzeitiger Steigerung der Reaktivität.</p>
             <ul class="badges">
               <li class="badge" data-i18n="project1.tag1">Python</li>
               <li class="badge" data-i18n="project1.tag2">OpenFOAM</li>
               <li class="badge" data-i18n="project1.tag3">PyGMO</li>
               <li class="badge" data-i18n="project1.tag4">NSGA-II</li>
+              <li class="badge" data-i18n="project1.tag5">Blender</li>
             </ul>
             <p class="project__note" data-i18n="project1.institution">Forschungszentrum Jülich &amp; RWTH Aachen University</p>
           </div>
         </article>
 
-        <article class="card project" data-category="simulation">
-          <img class="project__media" src="assets/img/project-2.svg" alt="" loading="lazy" width="800" height="450">
+        <article class="card project">
+          <img class="project__media" src="assets/img/Paper_Reaktor.jpg" alt="" loading="lazy" width="379" height="237">
           <div class="project__body">
-            <p class="project__category" data-i18n="project2.category">Simulation</p>
-            <h3 data-i18n="project2.title">Charakterisierung eines Multiphase-Loop-Reaktors</h3>
-            <p class="project__text" data-i18n="project2.problem">Das Betriebsfenster eines Multiphase-Loop-Reaktors im Pilotmaßstab war für biotechnologische Anwendungen unbekannt.</p>
-            <p class="project__text" data-i18n="project2.method">CFD-Modellierung der Mehrphasenströmung zur Bestimmung des stabilen Betriebsfensters. Peer-reviewt veröffentlicht.</p>
+            <h3 data-i18n="project2.title">Hydrodynamische Charakterisierung eines Schlaufenreaktors</h3>
+            <p class="project__text" data-i18n="project2.text">Experimentelle Untersuchung und CFD-Simulationen zur Bestimmung des stabilen Betriebsfensters eines Multiphase-Schlaufenreaktors im Pilotmaßstab. Peer-reviewt veröffentlicht.</p>
             <ul class="badges">
               <li class="badge" data-i18n="project2.tag1">CFD</li>
               <li class="badge" data-i18n="project2.tag2">Python</li>
@@ -269,25 +255,67 @@ document.documentElement.classList.add("js");
           </div>
         </article>
 
-        <article class="card project" data-category="web">
+        <article class="card project">
+          <img class="project__media" src="assets/img/Bachelorarbeit_EQMOM.jpg" alt="" loading="lazy" width="296" height="234">
+          <div class="project__body">
+            <h3 data-i18n="project3.title">Numerische Abbildung von Polydispersität mittels EQMOM</h3>
+            <p class="project__text" data-i18n="project3.text">Rekonstruktion kontinuierlicher Partikelgrößenverteilungen mittels Extended Quadrature Method of Moments (EQMOM) und numerischer Momentenmethoden.</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project3.tag1">EQMOM</li>
+              <li class="badge" data-i18n="project3.tag2">Python</li>
+              <li class="badge" data-i18n="project3.tag3">Numerische Integration</li>
+              <li class="badge" data-i18n="project3.tag4">Partikelsimulation</li>
+            </ul>
+            <p class="project__note" data-i18n="project3.institution">RWTH Aachen University (2025)</p>
+          </div>
+        </article>
+
+        <article class="card project">
+          <img class="project__media" src="assets/img/Seminararbeit_Yolo.jpg" alt="" loading="lazy" width="497" height="497">
+          <div class="project__body">
+            <h3 data-i18n="project4.title">Rekonstruktion von Strömungsprofilen via Partikelbeschleunigung</h3>
+            <p class="project__text" data-i18n="project4.text">Detektion von Tracer-Partikeln in Strömungsfeldern mittels neuronaler Netze (YOLO) und numerische Rekonstruktion lokaler Geschwindigkeits- und Beschleunigungsprofile.</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project4.tag1">YOLO</li>
+              <li class="badge" data-i18n="project4.tag2">PyTorch</li>
+              <li class="badge" data-i18n="project4.tag3">Computer Vision</li>
+              <li class="badge" data-i18n="project4.tag4">Python</li>
+            </ul>
+            <p class="project__note" data-i18n="project4.institution">RWTH Aachen University</p>
+          </div>
+        </article>
+
+        <article class="card project">
+          <img class="project__media" src="assets/img/Projektarbeit_Car.jpg" alt="" loading="lazy" width="1200" height="641">
+          <div class="project__body">
+            <h3 data-i18n="project5.title">Analyse kritischer Fahrszenarien in Rennsimulationen</h3>
+            <p class="project__text" data-i18n="project5.text">Konzeption und Implementierung einer Werkzeugkette zur automatisierten Identifikation und Analyse sicherheitskritischer Szenarien im fahrphysikalischen Grenzbereich, für das Testen autonomer Fahrfunktionen.</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project5.tag1">MATLAB</li>
+              <li class="badge" data-i18n="project5.tag2">Python</li>
+              <li class="badge" data-i18n="project5.tag3">Rennsimulation</li>
+              <li class="badge" data-i18n="project5.tag4">Fahrzeugdynamik</li>
+            </ul>
+            <p class="project__note" data-i18n="project5.institution">RWTH Aachen University</p>
+          </div>
+        </article>
+
+        <article class="card project">
           <img class="project__media" src="assets/img/project-3.svg" alt="" loading="lazy" width="800" height="450">
           <div class="project__body">
-            <p class="project__category" data-i18n="project3.category">Webentwicklung</p>
-            <h3 data-i18n="project3.title">3D-Visualizer für Skitouren und Pistenhistorie</h3>
-            <p class="project__text" data-i18n="project3.problem">Skitouren werden als GPS-Tracks aufgezeichnet, die über das Gelände in drei Dimensionen nichts aussagen.</p>
-            <p class="project__text" data-i18n="project3.method">Eine browserbasierte WebGL-Anwendung, die aufgezeichnete Touren und die Pistenhistorie in einer interaktiven 3D-Szene darstellt.</p>
+            <h3 data-i18n="project6.title">Interaktive 3D-Visualisierung von Skitouren und Pistenhistorie</h3>
+            <p class="project__text" data-i18n="project6.text">Browserbasierte 3D-Geländedarstellung und GPS-Track-Analyse mit WebGL und Three.js.</p>
             <ul class="badges">
-              <li class="badge" data-i18n="project3.tag1">Three.js</li>
-              <li class="badge" data-i18n="project3.tag2">WebGL</li>
-              <li class="badge" data-i18n="project3.tag3">JavaScript</li>
-              <li class="badge" data-i18n="project3.tag4">GPS</li>
+              <li class="badge" data-i18n="project6.tag1">Three.js</li>
+              <li class="badge" data-i18n="project6.tag2">JavaScript</li>
+              <li class="badge" data-i18n="project6.tag3">WebGL</li>
+              <li class="badge" data-i18n="project6.tag4">GPS/GeoJSON</li>
             </ul>
+            <p class="project__note" data-i18n="project6.institution">Eigenprojekt</p>
           </div>
         </article>
 
       </div>
-
-      <p id="filter-empty" class="filter-empty" hidden data-i18n="filter.empty">In dieser Kategorie gibt es noch keine Projekte.</p>
     </div>
   </section>
 

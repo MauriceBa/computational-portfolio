@@ -50,14 +50,15 @@ test("no dictionary key is dead: each is used in the HTML or is runtime-only", (
   }
 });
 
-test("every data-category has a matching filter button", () => {
-  const cats = new Set(matchAll(html, /data-category="([^"]+)"/g));
-  const filters = new Set(matchAll(html, /data-filter="([^"]+)"/g));
-
-  assert.ok(cats.size > 0, "expected at least one project card");
-  for (const cat of cats) {
-    assert.ok(filters.has(cat), `category "${cat}" has no filter button`);
-  }
+test("the projects section has no category or filter machinery left", () => {
+  // Superseded by tests/projects.test.js, which asserts the same thing plus the
+  // card count. Kept here as a cheap regression against the filter creeping back.
+  assert.equal(html.includes("data-category="), false, "data-category must not reappear");
+  assert.equal(html.includes("data-filter="), false, "data-filter must not reappear");
+  assert.ok(
+    !matchAll(html, /data-i18n="(filter\.[^"]+)"/g).length,
+    "a filter.* translation key is still referenced from the markup"
+  );
 });
 
 test("index.html has exactly one h1", () => {

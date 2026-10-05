@@ -25,9 +25,8 @@ test("no runtime or chrome string carries placeholder brackets", () => {
   const MUST_BE_CLEAN = new Set([
     "nav.skip", "nav.label", "nav.menu", "nav.close",
     "nav.about", "nav.skills", "nav.projects", "nav.research", "nav.contact",
-    "theme.toDark", "theme.toLight", "lang.label", "filter.label",
+    "theme.toDark", "theme.toLight", "lang.label",
     "contact.github", "contact.linkedin",
-    "filter.result",
     "contact.status"
   ]);
 
@@ -105,14 +104,14 @@ test("an empty dictionary writes nothing at all", () => {
 // Runtime strings are UI copy, not placeholders: brackets would be read aloud by
 // a screen reader and shown inside the live region.
 const RUNTIME_STRINGS = [
-  "nav.close", "nav.menu", "filter.result", "theme.toDark",
+  "nav.close", "nav.menu", "theme.toDark",
   "theme.toLight", "contact.status"
 ];
 
 test("runtime UI strings are not wrapped in placeholder brackets", () => {
   for (const key of RUNTIME_STRINGS) {
     assert.match(key, /^[a-z]/, `${key} does not look like a translation key`);
-    for (const lang of ["en", "fr"]) {
+for (const lang of ["en", "fr"]) {
       const value = I18N[lang][key];
       assert.equal(typeof value, "string", `I18N.${lang} is missing ${key}`);
       assert.doesNotMatch(value, /^\[.*\]$/, `I18N.${lang}["${key}"] is bracketed: ${value}`);
@@ -121,10 +120,11 @@ test("runtime UI strings are not wrapped in placeholder brackets", () => {
   }
 });
 
-test("filter.result carries count and total tokens and nothing bracketed", () => {
+test("no filter translation keys survived the section rewrite", () => {
+  // The projects section no longer filters, so filter.* is dead weight that would
+  // silently rot. A new key here is a sign something was reintroduced half-way.
   for (const lang of ["en", "fr"]) {
-    const value = I18N[lang]["filter.result"];
-    assert.ok(value.includes("{count}"), `I18N.${lang} filter.result lost {count}`);
-    assert.ok(value.includes("{total}"), `I18N.${lang} filter.result lost {total}`);
+    const stale = Object.keys(I18N[lang]).filter((k) => k.startsWith("filter."));
+    assert.deepEqual(stale, [], `I18N.${lang} still has filter keys: ${stale.join(", ")}`);
   }
 });
