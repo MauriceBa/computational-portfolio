@@ -1,0 +1,11 @@
+# Local secrets -- never committed. CI writes the deploy copy from the
+# `CESIUM_ION_TOKEN` repository secret; locally copy the example file.
+slopes/ion-token.js
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tooling
+node_modules/

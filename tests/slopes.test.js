@@ -122,7 +122,7 @@ test("the portfolio links to the app at /slopes/ and to its repository", () => {
 
   assert.match(html, /href="\/slopes\/"/,
     "no link to /slopes/ in the portfolio");
-  assert.match(html, /href="https:\/\/github\.com\/MauriceBa\/VPS_Coding\/tree\/main\/slopes"/,
+  assert.match(html, /href="https:\/\/github\.com\/MauriceBa\/computational-portfolio\/tree\/main\/slopes"/,
     "no link to the slopes repository in the portfolio");
 });
 

@@ -16,7 +16,11 @@
   <!-- CESIUM -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-  
+
+  <!-- Ion token lives in ion-token.js (gitignored; written by CI from a secret).
+       The app degrades to plain satellite-free globe rendering without it. -->
+  <script src="ion-token.js"></script>
+
   <style>
     :root {
       --bg: #0d1117;
@@ -266,7 +270,9 @@
   </div>
 
   <script>
-  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjYWRiNWQ5ZS01MzJmLTQ3ZTItYTJkNy0wYzE4OWI1MzA5NzEiLCJpZCI6MzkzMzg4LCJpYXQiOjE3NzE4NjI1OTJ9.oMUm3gHMxrYab-OrCi17VBRLt7lR_CDGwbcnMwWr47c';
+  // Populated by ion-token.js (local dev) or the deploy workflow (CI).
+  // A missing token is not fatal: init3DMap() falls back to a token-free globe.
+  if (window.ION_TOKEN && window.Cesium) Cesium.Ion.defaultAccessToken = window.ION_TOKEN;
 
   // =====================
   // i18n
@@ -483,13 +489,23 @@
   async function init3DMap() {
     if (cesiumViewer) return;
     try {
-      cesiumViewer = new Cesium.Viewer('cesium-map', { 
-        terrainProvider: await Cesium.CesiumTerrainProvider.fromIonAssetId(1), 
-        baseLayerPicker: true, 
-        timeline: false, 
-        animation: false 
-      });
-      
+      const hasIon = Boolean(window.ION_TOKEN);
+      const viewerOptions = {
+        baseLayerPicker: true,
+        timeline: false,
+        animation: false
+      };
+      if (hasIon) {
+        viewerOptions.terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
+      } else {
+        // No token configured: keep the demo usable with token-free sources
+        // instead of failing every Ion request.
+        viewerOptions.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        viewerOptions.baseLayer = new Cesium.ImageryLayer(
+          new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' })
+        );
+      }
+      cesiumViewer = new Cesium.Viewer('cesium-map', viewerOptions);
       for (const d of allDays) {
         const gps = await loadGPS(d.folder);
         if (gps.length > 0) drawCesiumSegments(cesiumViewer, segmentGPS(gps));

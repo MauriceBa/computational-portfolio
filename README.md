@@ -29,8 +29,17 @@ node --test
 > Use bare `node --test`. `node --test tests/` does not work: Node reads the
 > argument as a module path and fails with `MODULE_NOT_FOUND`.
 
-Deploy by pushing to the `main` branch and enabling GitHub Pages for the
-repository (Settings → Pages → Source: `main` / root).
+Deploy: `.github/workflows/deploy.yml` builds the Pages artifact on every push to
+`main` and publishes it. Two one-time repository settings are needed:
+
+1. Settings → Pages → Source: **GitHub Actions** (not `main` / root — the branch
+   deploy would publish no token file).
+2. Settings → Secrets and variables → Actions → New repository secret:
+   **`CESIUM_ION_TOKEN`** = the Cesium Ion token used by the 3D view in
+   `/slopes/`.
+
+Without the secret the site still ships: the 3D view falls back to a token-free
+globe instead of failing.
 
 ---
 
@@ -252,6 +261,38 @@ becomes false and must be updated in the same change.
 
 ---
 
+## The slopes demo (`/slopes/`)
+
+A separate single-file app: a 3D dashboard over your ski-tour GPS data, linked
+from project card 6. It has its own i18n (EN/DE/FR) and shares nothing with the
+one-pager but the server.
+
+**It is static, by necessity.** GitHub Pages runs no PHP, so the app lists its
+tours from `slopes/app_data/manifest.json` — one folder name per ski day —
+instead of asking the server to enumerate directories. When you add a tour folder,
+add its name to the manifest too, or it will not appear (`tests/slopes.test.js`
+fails on any mismatch between manifest and disk).
+
+**The 3D view needs a Cesium Ion token.** The token is configuration, never
+source:
+
+| Where | File | Tracked? |
+|---|---|---|
+| Local development | `slopes/ion-token.js` | **no** — gitignored |
+| Template | `slopes/ion-token.example.js` | yes |
+| Deployment | written by the workflow from the `CESIUM_ION_TOKEN` secret | no |
+
+```bash
+cp slopes/ion-token.example.js slopes/ion-token.js   # then paste your token
+```
+
+A browser token is readable from view-source by anyone, so hiding it is not the
+protection — restrict it in the Cesium Ion dashboard (referrer + asset) and
+rotate it if it ever appears in a commit. `tests/secrets.test.js` fails the
+build on any credential-shaped string in the repository.
+
+---
+
 ## Files
 
 ```
@@ -263,6 +304,8 @@ assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
 assets/img/             six project images, favicon.svg, og-image.png
 assets/pdf/             your CV, one file per language (CV_DE/EN/FR_Maurice_Bastard.pdf)
+slopes/                 the 3D ski-tour demo (own i18n; `ion-token.js` is gitignored)
+.github/workflows/      Pages deploy: injects the token, uploads the artifact
 tests/                  Node built-in test runner; never served
 docs/superpowers/       the design spec and implementation plan
 ```

@@ -136,7 +136,7 @@ test("the ski visualiser links to the deployed app, not a guessed path", () => {
   // Root-relative, so it resolves at the custom domain rather than breaking under
   // a project-page subpath.
   assert.match(ski, /href="\/slopes\/"/);
-  assert.match(ski, /href="https:\/\/github\.com\/MauriceBa\/VPS_Coding\/tree\/main\/slopes"/);
+  assert.match(ski, /href="https:\/\/github\.com\/MauriceBa\/computational-portfolio\/tree\/main\/slopes"/);
 
   // Both links need the same protection as every other external link on the site.
   for (const tag of ski.match(/<a\b[^>]*>/g) || []) {

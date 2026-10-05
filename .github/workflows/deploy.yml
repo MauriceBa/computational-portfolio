@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # The token never enters the repository: it comes from the secret store
+      # and is written straight into the deploy artifact. An unset secret
+      # yields an empty token, which the app handles by falling back to a
+      # token-free globe.
+      - name: Write Cesium Ion token
+        env:
+          CESIUM_ION_TOKEN: ${{ secrets.CESIUM_ION_TOKEN }}
+        run: printf 'window.ION_TOKEN = "%s";\n' "$CESIUM_ION_TOKEN" > slopes/ion-token.js
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - id: deployment
+        uses: actions/deploy-pages@v4
