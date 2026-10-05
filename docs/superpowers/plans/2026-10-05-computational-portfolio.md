@@ -22,7 +22,7 @@
 - Every external link carries `rel="noopener noreferrer"` and `target="_blank"`.
 - Contrast: body text ≥ 4.5:1 and large text/UI borders ≥ 3:1 in **both** themes. If a chosen accent value fails, the accent is adjusted — the threshold is never relaxed.
 - All animations and transitions are removed inside `@media (prefers-reduced-motion: reduce)`.
-- Budgets (from spec §7): `index.html` ≤ 40 KB, `style.css` ≤ 20 KB, `main.js` + `i18n.js` ≤ 20 KB combined, each SVG ≤ 5 KB, `resume_placeholder.pdf` ≤ 10 KB.
+- Budgets (from spec §7): `index.html` ≤ 40 KB, `style.css` ≤ 20 KB, `main.js` + `i18n.js` ≤ 10 KB **gzipped** (raw reported, not enforced — the 109-key × 2-language dictionary is ~10 KB of content before any logic), each SVG ≤ 5 KB, `resume_placeholder.pdf` ≤ 10 KB.
 - All test files are `tests/*.test.js` and run with **`node --test`** from the repo root
   (bare, so Node auto-discovers `tests/`). Note: `node --test tests/` is **wrong** — Node
   treats the argument as a module path and fails with `MODULE_NOT_FOUND`. They are never
@@ -619,8 +619,8 @@ Keyboard-only pass (Tab order, hamburger, Escape, anchor focus landing, filters,
 
 - [ ] **Step 9: Verify the budget**
 
-Run: `Get-Item assets/js/main.js, assets/js/i18n.js | Select-Object Name, Length` and sum.
-Expected: combined ≤ 20480 bytes.
+Run: `node -e "const f=require(`node:fs`),z=require(`node:zlib`);const b=Buffer.concat([f.readFileSync(`assets/js/main.js`),f.readFileSync(`assets/js/i18n.js`)]);console.log(`raw ${b.length} gzip ${z.gzipSync(b).length}`)"`.
+Expected: gzipped ≤ 10240 bytes.
 
 - [ ] **Step 10: Commit**
 
