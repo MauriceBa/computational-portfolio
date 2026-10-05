@@ -32,7 +32,10 @@ test("content values mark their replaceable parts in square brackets", () => {
     "nav.skip", "nav.label", "nav.menu", "nav.close",
     "nav.about", "nav.skills", "nav.projects", "nav.research", "nav.contact",
     "theme.toDark", "theme.toLight", "lang.label", "filter.label",
-    "contact.github", "contact.linkedin"
+    "contact.github", "contact.linkedin",
+    // Rendered UI copy, not content: brackets here would show up in the live
+    // region as "[3 of 3 projects]".
+    "filter.result"
   ]);
 
   for (const lang of ["en", "fr"]) {

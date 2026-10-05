@@ -1,4 +1,4 @@
-﻿/* Translation dictionaries.
+/* Translation dictionaries.
  *
  * The German text lives in index.html as real static markup and is the
  * fallback for every key. These dictionaries hold only the other two
@@ -74,7 +74,7 @@ const I18N = {
     "filter.simulation": "[Simulation]",
     "filter.optimization": "[Optimization]",
     "filter.web": "[Web development]",
-    "filter.result": "[{count} of {total} projects]",
+    "filter.result": "{count} of {total} projects",
     "filter.empty": "[No projects in this category yet.]",
 
     "projects.heading": "[Projects]",
@@ -197,7 +197,7 @@ const I18N = {
     "filter.simulation": "[Simulation]",
     "filter.optimization": "[Optimisation]",
     "filter.web": "[Développement web]",
-    "filter.result": "[{count} sur {total} projets]",
+    "filter.result": "{count} sur {total} projets",
     "filter.empty": "[Aucun projet dans cette catégorie pour le moment.]",
 
     "projects.heading": "[Projets]",

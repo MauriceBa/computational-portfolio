@@ -72,13 +72,26 @@
       .split("{total}").join(String(total));
   }
 
+  /* The filter-status template lives in the markup for German (Approach A: the
+   * German text is the static source of truth, and there is deliberately no de
+   * dictionary), so an active EN/FR dictionary is tried first and the markup's
+   * own template is the fallback. Without this the live region reads empty in
+   * German. */
+  function pickFilterTemplate(activeDict, domTemplate) {
+    var value = activeDict && activeDict["filter.result"];
+    if (typeof value === "string" && value !== "") return value;
+    if (typeof domTemplate === "string" && domTemplate !== "") return domTemplate;
+    return "";
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
     buildMailtoUrl: buildMailtoUrl,
     translateDocument: translateDocument,
     cardMatchesCategory: cardMatchesCategory,
-    formatFilterResult: formatFilterResult
+    formatFilterResult: formatFilterResult,
+    pickFilterTemplate: pickFilterTemplate
   };
 
   // --- module guard (Node tests) ---
@@ -359,7 +372,7 @@
 
         if (filterStatus) {
           filterStatus.textContent = formatFilterResult(
-            dict()["filter.result"],
+            pickFilterTemplate(dict(), filterStatus.getAttribute("data-count-template")),
             visibleCount,
             cards.length
           );
