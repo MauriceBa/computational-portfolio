@@ -68,6 +68,10 @@ test("the viewer reuses the shared Ion token setup instead of embedding a token"
     "the viewer no longer reads the token from configuration");
   assert.match(app, /EllipsoidTerrainProvider/,
     "there is no token-free terrain fallback, so an unset secret breaks 3D");
+  assert.match(app, /UrlTemplateImageryProvider/,
+    "the token-free imagery fallback must not rely on a deprecated provider");
+  assert.match(app, /try \{\s*state\.cesium = new Cesium\.Viewer/,
+    "viewer creation is not wrapped, so a Cesium failure kills the 3D tab");
 });
 
 test("the 2D and 3D views are both present and switchable", () => {

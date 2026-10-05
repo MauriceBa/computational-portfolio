@@ -391,26 +391,50 @@
     }
 
     // ---- 3D --------------------------------------------------------------
+    /* Token-free globe: plain sphere + OSM tiles. Nothing here depends on a
+       Cesium Ion token, so it can never 404 or block viewer creation. */
+    function tokenFreeGlobe(opts) {
+      opts.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+      opts.baseLayer = new Cesium.ImageryLayer(
+        new Cesium.UrlTemplateImageryProvider({
+          url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+          maximumLevel: 19,
+          credit: "© OpenStreetMap contributors"
+        })
+      );
+    }
+
     async function initCesium() {
       if (state.cesium) return;
-      if (window.ION_TOKEN && window.Cesium) Cesium.Ion.defaultAccessToken = window.ION_TOKEN;
       const hasIon = Boolean(window.ION_TOKEN);
+      if (hasIon && window.Cesium) Cesium.Ion.defaultAccessToken = window.ION_TOKEN;
       const opts = {
         baseLayerPicker: false, geocoder: false, homeButton: false,
         sceneModePicker: false, navigationHelpButton: false, animation: false,
         timeline: false, fullscreenButton: false, infoBox: false,
         selectionIndicator: false, creditContainer: document.createElement("div")
       };
-      try {
-        if (hasIon) opts.terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
-        else throw new Error("no ion token");
-      } catch (e) {
-        opts.terrainProvider = new Cesium.EllipsoidTerrainProvider();
-        opts.baseLayer = new Cesium.ImageryLayer(
-          new Cesium.OpenStreetMapImageryProvider({ url: "https://tile.openstreetmap.org/" })
-        );
+      if (!hasIon) {
+        tokenFreeGlobe(opts);
+      } else {
+        try {
+          opts.terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
+        } catch (e) {
+          /* Token invalid or asset unreachable: degrade, do not throw. */
+          console.warn("Ion terrain unavailable, using token-free globe", e);
+          tokenFreeGlobe(opts);
+        }
       }
-      state.cesium = new Cesium.Viewer("map3d", opts);
+      try {
+        state.cesium = new Cesium.Viewer("map3d", opts);
+      } catch (e) {
+        console.error("Cesium viewer failed to start", e);
+        const banner = $("error-banner");
+        banner.textContent = "3D-Ansicht konnte nicht geladen werden – die 2D-Karte bleibt verfügbar.";
+        banner.classList.add("show");
+        setMode("2d");
+        return;
+      }
       state.cesiumPaths = state.cesium.scene.primitives.add(new Cesium.PolylineCollection());
       state.cesiumDots = state.cesium.scene.primitives.add(new Cesium.PointPrimitiveCollection());
       render3D();
@@ -462,7 +486,7 @@
       $("map2d").style.display = mode === "2d" ? "block" : "none";
       $("map3d").style.display = mode === "3d" ? "block" : "none";
       if (mode === "3d") {
-        initCesium().then(() => state.cesium.resize());
+        initCesium().then(() => { if (state.cesium) state.cesium.resize(); });
       } else if (state.map) {
         state.map.invalidateSize();
       }
