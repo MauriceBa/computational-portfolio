@@ -515,7 +515,7 @@ git commit -m "feat: add one-pager markup with all sections and i18n keys"
 
 **Interfaces:**
 - Consumes: the class names, IDs, and structure from Task 7.
-- Produces: the token names every other task relies on — `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-accent`, `--color-accent-contrast`, `--color-border`, `--space-1..8`, `--radius-sm/md/lg`, `--font-sans`, `--font-mono`, `--text-sm/base/lg/xl/3xl`, `--shadow-1/2`, `--container`, `--header-h`.
+- Produces: the token names every other task relies on — `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-accent`, `--color-accent-contrast`, `--color-border`, `--space-1..8`, `--radius-sm/md/lg`, `--font-sans`, `--font-mono`, `--text-sm/base/lg/xl/3xl`, `--shadow-1/2`, `--container`, `--header-h`, plus three additions justified in Step 6: `--color-hairline`, `--color-shadow` (an `R G B` triple, consumed by the shadow tokens), and `--speed`.
 
 - [ ] **Step 1: Write tokens and the dark override**
 
@@ -537,10 +537,28 @@ One breakpoint at 860 px: the nav list collapses and `#nav-toggle` becomes visib
 
 `@media (prefers-reduced-motion: reduce)` sets `scroll-behavior: auto` and forces `transition-duration: 0.01ms` / `animation: none`. `@media (prefers-contrast: more)` strengthens `--color-border` and focus rings.
 
-- [ ] **Step 6: Verify contrast in both themes**
+- [ ] **Step 6: Verify contrast in both themes, and split border from hairline**
 
-Compute the contrast ratio of `--color-text` on `--color-bg` and of `--color-muted` on `--color-surface`, for light and dark, in both the default and `prefers-contrast: more` states.
-Expected: body text ≥ 4.5:1, borders ≥ 3:1. Adjust accent lightness until this holds — per Global Constraints, never relax the threshold.
+Do not pick the palette by eye. Compute the WCAG 2.1 relative-luminance contrast ratio for
+every foreground/background pair the site actually renders, in four states: light, dark,
+`prefers-contrast: more` on light, and `prefers-contrast: more` on dark.
+
+A single `--color-border` cannot satisfy the spec's "UI borders ≥ 3:1" without making every
+card look like a bordered table. WCAG 1.4.11 requires 3:1 only for boundaries that convey
+information or define an interactive control — not for decorative surface edges. So split
+the token:
+
+- `--color-border` — inputs, filter buttons, the availability pill, focus rings. **≥ 3:1**
+  against both `--color-bg` and `--color-surface` in all four states.
+- `--color-hairline` — card edges, badges, footer and header dividers. Decorative, so no
+  ratio requirement; kept visually quiet.
+
+If a value fails, adjust the value. Per Global Constraints the threshold is never relaxed.
+
+Expected: every pair passes in all four states. Two values from a known-good palette, both
+recomputed rather than assumed — light border `#7d8896` (3.60:1 on bg, 3.33:1 on surface)
+and dark border `#64748b` (3.96:1 on bg, 3.53:1 on surface). Body text has large headroom
+in both themes (17.7:1 light, 16.2:1 dark).
 
 - [ ] **Step 7: Verify the budget**
 
