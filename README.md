@@ -114,14 +114,11 @@ text replacement deletes them. A test enforces this; if you hit it, use
 ## What is still placeholder
 
 The text content is complete: **zero square-bracket placeholders remain** on any
-page, and `tests/placeholders.test.js` enforces that. Three binary assets are
-still generated stand-ins:
+page, and `tests/placeholders.test.js` enforces that. Two binary assets are still
+generated stand-ins:
 
-1. **`assets/pdf/resume_placeholder.pdf`** — the "Download CV" button points at a
-   generated placeholder. Replace it with your real CV under the same filename, or
-   change the `href`.
-2. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
-3. **`assets/img/og-image.png`** is a gradient with no text on it.
+1. **The project images** in `assets/img/project-*.svg` are abstract placeholders.
+2. **`assets/img/og-image.png`** is a gradient with no text on it.
 
 Check for yourself:
 
@@ -167,6 +164,27 @@ Select-String -Path *.html, assets/js/main.js -Pattern "contact@mauricebastard.d
 | `impressum.html` | the contact block |
 | `datenschutz.html` → controller block | the controller address |
 | `datenschutz.html` → rights block | where data-subject requests go |
+
+### Swapping the CV
+
+There is one CV per language in `assets/pdf/`, named by language code:
+
+```
+CV_DE_Maurice_Bastard.pdf
+CV_EN_Maurice_Bastard.pdf
+CV_FR_Maurice_Bastard.pdf
+```
+
+The download link follows the active language. `#cv-download` in the Hero carries
+the **German** file as its `href`, which is what a visitor gets with JavaScript
+disabled; `main.js` rewrites both `href` and `download` on every language change,
+so a French visitor gets the French CV rather than the German one.
+
+To replace a CV, keep the filename. To rename them, change the `CV_FILENAMES` map
+at the top of the wiring section in `assets/js/main.js` and the `href` on
+`#cv-download` in `index.html` — `tests/cv.test.js` checks that both still agree,
+that all three files exist, and that the language switch actually calls
+`updateCvLink()`.
 
 ### GitHub and LinkedIn
 
@@ -223,7 +241,7 @@ assets/css/style.css    design tokens, layout, components, responsive rules
 assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
 assets/img/             placeholder project SVGs, favicon, og-image.png
-assets/pdf/             placeholder CV (resume_placeholder.pdf)
+assets/pdf/             your CV, one file per language (CV_DE/EN/FR_Maurice_Bastard.pdf)
 tests/                  Node built-in test runner; never served
 docs/superpowers/       the design spec and implementation plan
 ```
@@ -304,7 +322,6 @@ after editing content.
       clean; verify with
       `Select-String -Path index.html, impressum.html, datenschutz.html, assets/js/i18n.js -Pattern '\[.+?\]'`
       — leave this README out of the search, it contains bracketed examples
-- [ ] `assets/pdf/resume_placeholder.pdf` replaced with the real CV
 - [ ] `assets/img/` holds real project visuals
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true

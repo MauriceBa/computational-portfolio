@@ -127,11 +127,18 @@ test("project cards only link to things that actually exist", () => {
   );
 });
 
-test("internal work has no download button, so no button points at a placeholder PDF", () => {
+test("the only downloadable PDF is the German CV", () => {
   const pdfLinks = [...html.matchAll(/href="(assets\/pdf\/[^"]*)"/g)].map((m) => m[1]);
 
-  // Only the CV remains downloadable; the thesis and report were pulled back.
-  assert.deepEqual(pdfLinks, ["assets/pdf/resume_placeholder.pdf"]);
+  // The CV exists in three languages, but the markup carries the German one as the
+  // default: main.js swaps href and download on every language change. A single
+  // hard-coded href would hand every visitor the German file.
+  assert.deepEqual(pdfLinks, ["assets/pdf/CV_DE_Maurice_Bastard.pdf"]);
+
+  for (const lang of ["DE", "EN", "FR"]) {
+    const file = `assets/pdf/CV_${lang}_Maurice_Bastard.pdf`;
+    assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} is missing`);
+  }
 });
 
 test("the German text and the dictionaries agree on the person's name", () => {

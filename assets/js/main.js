@@ -92,6 +92,28 @@
     return isWide && navIsOpen;
   }
 
+  /* One CV per language. A single hard-coded href hands every visitor the German
+   file regardless of which language they are reading in. */
+  var CV_FILENAMES = {
+    de: "CV_DE_Maurice_Bastard.pdf",
+    en: "CV_EN_Maurice_Bastard.pdf",
+    fr: "CV_FR_Maurice_Bastard.pdf"
+  };
+
+  function cvFilename(lang) {
+    return Object.prototype.hasOwnProperty.call(CV_FILENAMES, lang)
+      ? CV_FILENAMES[lang]
+      : CV_FILENAMES.de;
+  }
+
+  function cvPath(lang) {
+    return "assets/pdf/" + cvFilename(lang);
+  }
+
+  function cvDownloadName(lang) {
+    return cvFilename(lang);
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
@@ -100,7 +122,9 @@
     cardMatchesCategory: cardMatchesCategory,
     formatFilterResult: formatFilterResult,
     pickFilterTemplate: pickFilterTemplate,
-    shouldResetNav: shouldResetNav
+    shouldResetNav: shouldResetNav,
+    cvPath: cvPath,
+    cvDownloadName: cvDownloadName
   };
 
   // --- module guard (Node tests) ---
@@ -195,6 +219,7 @@
         }
 
         updateThemeLabel();
+        updateCvLink();
         applyFilter(activeFilter);
       }
 
@@ -245,6 +270,16 @@
           setLanguage(event.currentTarget.getAttribute("data-lang"));
           writePref(STORAGE_KEYS.lang, state.lang);
         });
+      }
+
+      /* ------------------- language-versioned CV ------------------- */
+
+      var cvLink = doc.getElementById("cv-download");
+
+      function updateCvLink() {
+        if (!cvLink) return;
+        cvLink.setAttribute("href", cvPath(state.lang));
+        cvLink.setAttribute("download", cvDownloadName(state.lang));
       }
 
       /* ------------------------ mobile nav ------------------------ */
