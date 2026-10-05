@@ -51,3 +51,25 @@ test("the CV switch is wired into the language change, not just defined", () => 
   assert.match(main, /function updateCvLink\(\)/);
   assert.match(main, /updateCvLink\(\);/, "updateCvLink must actually be invoked");
 });
+
+test("absolute social-preview URLs match the CNAME", () => {
+  // The CNAME makes the site live at a custom domain. og:image and og:url are
+  // absolute, so if the domain changes and these do not, Facebook/LinkedIn/Slack
+  // request the preview from a host that no longer serves it and show nothing.
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const root = path.join(__dirname, "..");
+
+  const cname = fs.readFileSync(path.join(root, "CNAME"), "utf8").trim();
+  assert.match(cname, /^[a-z0-9.-]+\.[a-z]{2,}$/, `CNAME is not a hostname: ${cname}`);
+
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const origin = `https://${cname}`;
+
+  assert.match(html, new RegExp(`<meta property="og:url" content="${origin}/?">`));
+  assert.match(html, new RegExp(`<meta property="og:image" content="${origin}/assets/img/og-image\\.png">`));
+
+  // Nothing may still point at the old Pages host.
+  assert.equal(html.includes("mauriceba.github.io"), false,
+    "a mauriceba.github.io URL survived the CNAME change");
+});

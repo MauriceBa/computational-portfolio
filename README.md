@@ -186,6 +186,18 @@ at the top of the wiring section in `assets/js/main.js` and the `href` on
 that all three files exist, and that the language switch actually calls
 `updateCvLink()`.
 
+### Domain
+
+The repo root carries a `CNAME` file pinning the site to **mauricebastard.de**.
+GitHub Pages serves it there once the domain's DNS records are configured in the
+repository settings.
+
+`og:url` and `og:image` in `index.html` are **absolute** URLs and must match that
+domain — Facebook, LinkedIn and Slack silently drop a relative path, and a stale
+`github.io` origin yields an empty preview. `tests/cv.test.js` asserts the two
+agree, so changing the domain in one place fails the suite until you change the
+other.
+
 ### GitHub and LinkedIn
 
 Two profile links, both in the contact section: `github.com/MauriceBa` and the
