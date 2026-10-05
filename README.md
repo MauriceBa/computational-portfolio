@@ -143,13 +143,28 @@ Select-String -Path *.html, assets/js/main.js -Pattern "name@example.com"
 
 ### 3. GitHub and LinkedIn
 
-`[username]` appears eight times in `index.html`: the repository and demo links of
-all three project cards, the contact-section links, and the header brand. Search
-for `[username]` and replace each.
+`[username]` appears eight times in `index.html`, and `[repo]` six more times:
+
+- 6 × the repository and demo links of the three project cards
+  (`github.com/[username]/[repo]` and `[username].github.io/[repo]/`)
+- 1 × the GitHub link and 1 × the LinkedIn link in the contact section
+
+Replace both placeholders wherever they appear:
+
+```bash
+# macOS / Linux / Git Bash
+grep -rn "\[username\]\|\[repo\]" .
+```
+
+```powershell
+# Windows PowerShell
+Select-String -Path *.html -Pattern '\[username\]|\[repo\]'
+```
 
 Every project link is a placeholder URL — replace them with your real repository
 and demo addresses, or remove the `demo` link entirely if a project has no public
-demo rather than shipping a link to a nonexistent page.
+demo rather than shipping a link to a nonexistent page. Square brackets also make
+these URLs invalid to crawlers, which is the one thing holding SEO below 100.
 
 ### 4. Projects
 
@@ -238,7 +253,7 @@ and nothing to license.
 | Theme toggle | `#theme-toggle` | persists in `localStorage` under `portfolio-theme`; resolved before first paint so there is no flash |
 | Language switch | `#lang-group` | persists under `portfolio-lang`; also sets `<html lang>` |
 | Project filter | `#project-filter` | real buttons with `aria-pressed`; hides cards with the `hidden` attribute so they leave the accessibility tree; announces the count in a live region |
-| Mobile nav | `#nav-toggle` | below 860 px; sets `inert` on the rest of the page so Tab cannot escape an open menu; Escape closes it |
+| Mobile nav | `#nav-toggle` | below 864 px; sets `inert` on `<main>` and `<footer>` so Tab cannot reach the content behind an open menu; Escape closes it; the menu auto-closes if the viewport crosses into the wide layout |
 | Scroll spy | header nav | `IntersectionObserver`; marks the active link with `aria-current` |
 | Contact form | `#contact-form` | **has no backend.** GitHub Pages cannot receive submissions, so it opens the visitor's mail client via `mailto:`. Nothing is sent or stored. |
 
@@ -255,9 +270,11 @@ device and are described in the privacy page. Clearing site data removes them.
 - Full keyboard operation, visible focus rings, `aria-pressed` on all toggles.
 - Status changes (filter counts, validation failures) go through `aria-live`.
 - `prefers-reduced-motion` and `prefers-contrast: more` are both honoured.
-- With JavaScript disabled the site still renders completely in German and the
-  anchor navigation still works — deliberate, so crawlers and applicant tracking
-  systems read real content.
+- With JavaScript disabled the site still renders completely in German, all three
+  project cards are present, and the in-page navigation stays reachable at every
+  screen width — the collapsed menu falls back to an always-open list, so a
+  scripting-disabled visitor never gets a dead hamburger button. This is
+  deliberate, so crawlers and applicant tracking systems read real content.
 
 The `tests/maintenance.test.js` file guards the invariants that rot quietly as
 content changes: translation-key parity across all three languages, asset links

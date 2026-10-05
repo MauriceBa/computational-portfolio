@@ -35,7 +35,9 @@ test("content values mark their replaceable parts in square brackets", () => {
     "contact.github", "contact.linkedin",
     // Rendered UI copy, not content: brackets here would show up in the live
     // region as "[3 of 3 projects]".
-    "filter.result"
+    "filter.result",
+    // Read aloud by a screen reader on a failed submit.
+    "contact.status"
   ]);
 
   for (const lang of ["en", "fr"]) {
@@ -106,4 +108,31 @@ test("an empty dictionary writes nothing at all", () => {
   assert.equal(translateDocument(doc, {}), 0);
   assert.equal(nodes[0].textContent, "DEUTSCH");
   assert.equal(nodes[1].textContent, "DEUTSCH");
+});
+
+// Runtime strings are UI copy, not placeholders: brackets would be read aloud by
+// a screen reader and shown inside the live region.
+const RUNTIME_STRINGS = [
+  "nav.close", "nav.menu", "filter.result", "theme.toDark",
+  "theme.toLight", "contact.status"
+];
+
+test("runtime UI strings are not wrapped in placeholder brackets", () => {
+  for (const key of RUNTIME_STRINGS) {
+    assert.match(key, /^[a-z]/, `${key} does not look like a translation key`);
+    for (const lang of ["en", "fr"]) {
+      const value = I18N[lang][key];
+      assert.equal(typeof value, "string", `I18N.${lang} is missing ${key}`);
+      assert.doesNotMatch(value, /^\[.*\]$/, `I18N.${lang}["${key}"] is bracketed: ${value}`);
+      assert.doesNotMatch(value, /[\[\]]/, `I18N.${lang}["${key}"] contains brackets: ${value}`);
+    }
+  }
+});
+
+test("filter.result carries count and total tokens and nothing bracketed", () => {
+  for (const lang of ["en", "fr"]) {
+    const value = I18N[lang]["filter.result"];
+    assert.ok(value.includes("{count}"), `I18N.${lang} filter.result lost {count}`);
+    assert.ok(value.includes("{total}"), `I18N.${lang} filter.result lost {total}`);
+  }
 });

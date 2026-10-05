@@ -186,3 +186,41 @@ test("headings descend without skipping a level", () => {
     }
   }
 });
+
+// ---- Review findings: regression guards ----
+
+test("every section heading uses its own .heading key, not a card title key", () => {
+  // Regression: the Kernkompetenzen <h2> was bound to skills.simulation.title,
+  // the same key as the first card's <h3>. German was unaffected only because
+  // there is no de dictionary, so EN/FR rendered the section heading as
+  // "[Simulation methods]".
+  const headings = [...html.matchAll(/<h2[^>]*class="section__title"[^>]*>/g)].map((m) => m[0]);
+  assert.ok(headings.length >= 4, `expected the section headings, found ${headings.length}`);
+
+  const cardTitles = new Set(matchAll(html, /<h3[^>]*data-i18n="([^"]+)"/g));
+
+  for (const heading of headings) {
+    const key = heading.match(/data-i18n="([^"]+)"/)[1];
+    assert.match(key, /\.heading$/, `section heading key "${key}" should end in .heading`);
+    assert.ok(!cardTitles.has(key), `section heading "${key}" is shared with a card title`);
+  }
+});
+
+test("every data-i18n key binds to exactly one distinct meaning", () => {
+  // A key may legitimately appear on several elements (hero.name is both the
+  // header brand and the h1). What must never happen is one key serving two
+  // different element *types* with different content -- that silently swaps
+  // unrelated strings when translated.
+  const byKey = new Map();
+  for (const m of html.matchAll(/<(h1|h2|h3|h4|p|li|dt|span|div|title|a|button)\b([^>]*\sdata-i18n="([^"]+)"[^>]*)>/g)) {
+    const [, tag, , key] = m;
+    if (!byKey.has(key)) byKey.set(key, new Set());
+    byKey.get(key).add(tag);
+  }
+  // hero.name is the documented exception: a span (brand) plus the h1.
+  const ALLOWED = new Set(["hero.name"]);
+  for (const [key, tags] of byKey) {
+    if (tags.size <= 1 || ALLOWED.has(key)) continue;
+    assert.fail(`key "${key}" drives ${[...tags].join(", ")} — one key, two meanings`);
+  }
+});

@@ -5,9 +5,15 @@
  * languages. A key absent here leaves the German text visible rather than
  * blanking the element.
  *
- * Convention: every value is a placeholder wrapped in square brackets, so it
- * is obvious at a glance what still needs real content. The sole exception is
- * nav.close, which is fixed interface chrome.
+ * Convention: content values are placeholders wrapped in square brackets, so it
+ * is obvious at a glance what still needs real content.
+ *
+ * Two groups are exempt because brackets would be *rendered* to the user rather
+ * than mark unfinished work: fixed interface chrome (nav labels, theme labels,
+ * lang.label, filter.label, contact.github/linkedin) and runtime strings written
+ * by main.js (nav.menu, nav.close, theme.toDark/toLight, filter.result,
+ * contact.status). Those go into live regions or accessible names, where a
+ * bracket reads as noise or gets spoken aloud.
  */
 const I18N = {
   en: {
@@ -43,6 +49,7 @@ const I18N = {
     "about.stat2": "[Y] projects",
     "about.stat3": "[Z] simulations",
 
+    "skills.heading": "[Expertise]",
     "skills.simulation.title": "[Simulation methods]",
     "skills.simulation.desc": "[One line on how I model and solve physical problems.]",
     "skills.simulation.tag1": "[Finite element method]",
@@ -124,7 +131,7 @@ const I18N = {
     "contact.subject": "[Subject]",
     "contact.message": "[Your message]",
     "contact.submit": "[Prepare message by email]",
-    "contact.status": "[Please fill in all fields.]",
+    "contact.status": "Please fill in all fields.",
     "contact.github": "GitHub",
     "contact.linkedin": "LinkedIn",
 
@@ -166,6 +173,7 @@ const I18N = {
     "about.stat2": "[Y] projets",
     "about.stat3": "[Z] simulations",
 
+    "skills.heading": "[Expertise]",
     "skills.simulation.title": "[Méthodes de simulation]",
     "skills.simulation.desc": "[Une ligne sur la façon dont je modélise et résous des problèmes physiques.]",
     "skills.simulation.tag1": "[Méthode des éléments finis]",
@@ -247,7 +255,7 @@ const I18N = {
     "contact.subject": "[Objet]",
     "contact.message": "[Votre message]",
     "contact.submit": "[Préparer le message par courriel]",
-    "contact.status": "[Veuillez remplir tous les champs.]",
+    "contact.status": "Veuillez remplir tous les champs.",
     "contact.github": "GitHub",
     "contact.linkedin": "LinkedIn",
 

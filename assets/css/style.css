@@ -167,7 +167,7 @@ a:hover {
 
 .section {
   padding-block: var(--space-8);
-  scroll-margin-top: calc(var(--header-h) + 1rem);
+  scroll-margin-top: var(--header-offset, calc(var(--header-h) + 1rem));
 }
 
 .section--alt {
@@ -398,17 +398,17 @@ a:hover {
   display: block;
 }
 
-.nav-toggle {
-  display: none;
-  width: 2.4rem;
-  height: 2.4rem;
-  padding: 0;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-}
+  .nav-toggle {
+    display: none;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+  }
 
 .nav-toggle__bars,
 .nav-toggle__bars::before,
@@ -474,7 +474,7 @@ a:hover {
   position: relative;
   padding-block: var(--space-8) var(--space-7);
   overflow: hidden;
-  scroll-margin-top: calc(var(--header-h) + 1rem);
+  scroll-margin-top: var(--header-offset, calc(var(--header-h) + 1rem));
 }
 
 .hero__backdrop {
@@ -865,13 +865,23 @@ a:hover {
     --header-h: 3.5rem;
   }
 
-  .nav-toggle {
+  .site-header__brand {
+    order: 1;
+    /* Let the brand truncate rather than grow, so the row never overflows. */
+    min-width: 0;
+  }
+
+  /* The hamburger only works with JS, so it stays hidden without it, and it
+   * only exists at all in the narrow layout. */
+  .js .nav-toggle {
     display: block;
     order: 3;
   }
 
-  .site-header__brand {
-    order: 1;
+  .site-header__brand span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .site-header__controls {
@@ -880,15 +890,23 @@ a:hover {
     margin-right: var(--space-2);
   }
 
+  /* Without JS the menu cannot be collapsed, so the default is expanded and
+   * only a JS-enabled page opts into the disclosure. This keeps the in-page
+   * navigation working at every width with scripting disabled, instead of
+   * leaving a permanently dead hamburger button. */
   .site-nav {
     order: 4;
-    display: none;
+    display: block;
     width: 100%;
     padding-block: var(--space-3);
     border-top: 1px solid var(--color-hairline);
   }
 
-  .site-nav.is-open {
+  .js .site-nav {
+    display: none;
+  }
+
+  .js .site-nav.is-open {
     display: block;
   }
 

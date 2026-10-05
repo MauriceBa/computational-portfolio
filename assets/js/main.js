@@ -84,6 +84,14 @@
     return "";
   }
 
+  /* An open menu makes <main> and <footer> inert, and the only control that
+   * clears that is #nav-toggle -- which is display:none above the breakpoint.
+   * So crossing into the wide state while the menu is open would leave the whole
+   * page inert and unclickable, with nothing on screen to explain it. */
+  function shouldResetNav(isWide, navIsOpen) {
+    return isWide && navIsOpen;
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
@@ -91,7 +99,8 @@
     translateDocument: translateDocument,
     cardMatchesCategory: cardMatchesCategory,
     formatFilterResult: formatFilterResult,
-    pickFilterTemplate: pickFilterTemplate
+    pickFilterTemplate: pickFilterTemplate,
+    shouldResetNav: shouldResetNav
   };
 
   // --- module guard (Node tests) ---
@@ -254,7 +263,9 @@
           var navLabel = dict()[open ? "nav.close" : "nav.menu"];
           if (navLabel) navToggle.setAttribute("aria-label", navLabel);
         }
-        /* Keep Tab inside the open menu instead of reaching content behind it. */
+        /* Keep Tab from reaching the content behind an open menu. Only main and
+         * footer go inert: the header's own controls stay reachable, which is
+         * what lets the menu be closed with the keyboard. */
         ["main", "footer"].forEach(function (tag) {
           var el = doc.querySelector(tag);
           if (!el) return;
@@ -274,26 +285,50 @@
             navToggle.focus();
           }
         });
+
+        /* Reset when the viewport crosses into the wide state, so rotating a
+         * phone or dragging a window wider cannot strand <main> as inert. */
+        var wide = null;
+        try {
+          wide = window.matchMedia("(min-width: 54rem)");
+        } catch (e) {
+          wide = null;
+        }
+
+        if (wide) {
+          var onBreakpoint = function (event) {
+            if (shouldResetNav(event.matches, navOpen)) {
+              setNav(false);
+            }
+          };
+          if (typeof wide.addEventListener === "function") {
+            wide.addEventListener("change", onBreakpoint);
+          } else if (typeof wide.addListener === "function") {
+            wide.addListener(onBreakpoint);
+          }
+        }
       }
 
       /* ------------------- anchor focus management ------------------- */
 
-      var navList = navMenu ? navMenu.querySelector("ul") : null;
-      if (navList) {
-        navList.addEventListener("click", function (event) {
-          var link = event.target.closest ? event.target.closest("a[href^='#']") : null;
-          if (!link) return;
+      /* Delegated from the document, not the nav list: the hero's two primary
+       * CTAs are in-page anchors too, and they are the most prominent links on
+       * the page. Leaving them out strands focus thousands of pixels above the
+       * target after Enter or Space. */
+      doc.addEventListener("click", function (event) {
+        var origin = event.target;
+        var link = origin && origin.closest ? origin.closest("a[href^='#']") : null;
+        if (!link) return;
 
-          var target = doc.getElementById(link.getAttribute("href").slice(1));
-          if (!target) return;
+        var target = doc.getElementById(link.getAttribute("href").slice(1));
+        if (!target) return;
 
-          event.preventDefault();
-          if (navOpen) setNav(false);
-          target.setAttribute("tabindex", "-1");
-          target.scrollIntoView();
-          target.focus({ preventScroll: true });
-        });
-      }
+        event.preventDefault();
+        if (navOpen) setNav(false);
+        target.setAttribute("tabindex", "-1");
+        target.scrollIntoView();
+        target.focus({ preventScroll: true });
+      });
 
       /* ------------------------ scroll spy ------------------------ */
 
@@ -432,6 +467,26 @@
         };
         onScroll();
         window.addEventListener("scroll", onScroll, { passive: true });
+
+        /* --header-h is a design guess, and the header wraps to two or three
+         * rows on narrow phones -- which made it taller than the sections'
+         * scroll-margin-top and hid the top of each heading when jumping to an
+         * anchor. Measure it into a SEPARATE property, --header-offset: feeding
+         * it back into --header-h would ratchet the header taller forever,
+         * because .site-header__inner's min-height uses that token. */
+        var syncHeaderOffset = function () {
+          var height = Math.ceil(header.getBoundingClientRect().height);
+          if (height > 0) {
+            root.style.setProperty("--header-offset", height + 16 + "px");
+          }
+        };
+
+        syncHeaderOffset();
+        window.addEventListener("resize", syncHeaderOffset);
+
+        if (typeof ResizeObserver !== "undefined") {
+          new ResizeObserver(syncHeaderOffset).observe(header);
+        }
       }
 
       /* --------------------------- boot --------------------------- */
