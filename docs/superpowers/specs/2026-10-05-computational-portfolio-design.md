@@ -399,7 +399,7 @@ That is correct behaviour, not a gap.
 | `index.html` | ≤ 40 KB |
 | `style.css` | ≤ 20 KB |
 | `main.js` + `i18n.js`, **gzipped** | ≤ 10 KB |
-| `main.js` + `i18n.js`, raw | ≤ 28 KB (reported, not enforced) |
+| `main.js` + `i18n.js`, raw | ≤ 30 KB (reported, not enforced) |
 | Each SVG | ≤ 5 KB |
 | `resume_placeholder.pdf` | ≤ 10 KB |
 | Third-party requests | 0 |
@@ -408,7 +408,7 @@ The JS budget is stated **gzipped** because that is what the performance require
 actually protects: transfer time on the wire. A raw-bytes budget for the JS is
 unachievable and misleading here — the translation dictionary is 109 keys × 2 languages
 of genuine content, roughly 10 KB before a line of logic exists, so a raw cap can only be
-met by deleting translations. Measured at time of writing: 25211 B raw, 6836 B gzipped.
+met by deleting translations. Measured at time of writing: 28799 B raw, 8288 B gzipped.
 The raw figure is still reported so the growth is visible, but the gate is the gzipped
 one.
 
