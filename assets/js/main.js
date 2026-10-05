@@ -58,11 +58,16 @@
     return written;
   }
 
+  function cardMatchesCategory(cardCategory, activeCategory) {
+    return activeCategory === "all" || cardCategory === activeCategory;
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
     buildMailtoUrl: buildMailtoUrl,
-    translateDocument: translateDocument
+    translateDocument: translateDocument,
+    cardMatchesCategory: cardMatchesCategory
   };
 
   // --- module guard (Node tests) ---
