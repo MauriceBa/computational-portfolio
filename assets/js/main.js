@@ -32,10 +32,37 @@
     );
   }
 
+  function translateDocument(doc, dict) {
+    var nodes = doc.querySelectorAll("[data-i18n]");
+    var written = 0;
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      var key = node.getAttribute("data-i18n");
+
+      if (!dict || !Object.prototype.hasOwnProperty.call(dict, key)) {
+        continue;
+      }
+
+      var attr = node.getAttribute("data-i18n-attr");
+
+      if (attr) {
+        node.setAttribute(attr, dict[key]);
+      } else {
+        node.textContent = dict[key];
+      }
+
+      written += 1;
+    }
+
+    return written;
+  }
+
   var api = {
     STORAGE_KEYS: STORAGE_KEYS,
     resolveTheme: resolveTheme,
-    buildMailtoUrl: buildMailtoUrl
+    buildMailtoUrl: buildMailtoUrl,
+    translateDocument: translateDocument
   };
 
   // --- module guard (Node tests) ---
