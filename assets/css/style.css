@@ -793,6 +793,24 @@ a:hover {
   border-color: var(--color-accent);
 }
 
+/* -- legal pages -- */
+
+.legal {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.legal h2 {
+  font-size: var(--text-base);
+  letter-spacing: 0;
+}
+
+.legal p:last-child {
+  margin-bottom: 0;
+}
+
 /* -- footer -- */
 
 .site-footer {
@@ -836,7 +854,8 @@ a:hover {
   }
 
   .about,
-  .contact {
+  .contact,
+  .legal {
     grid-template-columns: minmax(0, 1fr);
   }
 }
