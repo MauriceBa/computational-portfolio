@@ -98,7 +98,9 @@ document.documentElement.classList.add("js");
 
   <!-- ============================== HERO ============================== -->
   <section id="hero" class="section hero" aria-labelledby="hero-heading">
-    <div class="hero__backdrop" aria-hidden="true"></div>
+    <div class="hero__backdrop" aria-hidden="true">
+              <canvas class="hero__mesh"></canvas>
+            </div>
     <div class="container hero__inner">
       <p class="hero__availability">
         <span class="dot" aria-hidden="true"></span>
@@ -222,7 +224,11 @@ document.documentElement.classList.add("js");
       <div id="project-grid" class="cards cards--3">
 
         <article class="card project">
-          <img class="project__media" src="assets/img/Masterarbeit_Schuettung.jpg" alt="" loading="lazy" width="917" height="516">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Masterarbeit_Schuettung.jpg" alt="" loading="lazy" width="917" height="516">
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project1.title">In-Silico Formoptimierung von Katalysator-Pellets</h3>
             <p class="project__text" data-i18n="project1.text">Automatisierte 3D-Geometrieerzeugung (Blender/Python), gekoppelt an Schüttungsgeometrie-Simulationen und multikriterielle Optimierung (NSGA-II) zur Reduktion von Druckverlusten bei gleichzeitiger Steigerung der Reaktivität.</p>
@@ -238,7 +244,11 @@ document.documentElement.classList.add("js");
         </article>
 
         <article class="card project">
-          <img class="project__media" src="assets/img/Paper_Reaktor.jpg" alt="" loading="lazy" width="379" height="237">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Paper_Reaktor.jpg" alt="" loading="lazy" width="379" height="237">
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project2.title">Hydrodynamische Charakterisierung eines Schlaufenreaktors</h3>
             <p class="project__text" data-i18n="project2.text">Experimentelle Untersuchung und CFD-Simulationen zur Bestimmung des stabilen Betriebsfensters eines Multiphase-Schlaufenreaktors im Pilotmaßstab. Peer-reviewt veröffentlicht.</p>
@@ -256,7 +266,11 @@ document.documentElement.classList.add("js");
         </article>
 
         <article class="card project">
-          <img class="project__media" src="assets/img/Bachelorarbeit_EQMOM.jpg" alt="" loading="lazy" width="296" height="234">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Bachelorarbeit_EQMOM.jpg" alt="" loading="lazy" width="296" height="234">
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project3.title">Numerische Abbildung von Polydispersität mittels EQMOM</h3>
             <p class="project__text" data-i18n="project3.text">Rekonstruktion kontinuierlicher Partikelgrößenverteilungen mittels Extended Quadrature Method of Moments (EQMOM) und numerischer Momentenmethoden.</p>
@@ -271,7 +285,11 @@ document.documentElement.classList.add("js");
         </article>
 
         <article class="card project">
-          <img class="project__media" src="assets/img/Seminararbeit_Yolo.jpg" alt="" loading="lazy" width="497" height="497">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Seminararbeit_Yolo.jpg" alt="" loading="lazy" width="497" height="497">
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project4.title">Rekonstruktion von Strömungsprofilen via Partikelbeschleunigung</h3>
             <p class="project__text" data-i18n="project4.text">Detektion von Tracer-Partikeln in Strömungsfeldern mittels neuronaler Netze (YOLO) und numerische Rekonstruktion lokaler Geschwindigkeits- und Beschleunigungsprofile.</p>
@@ -286,7 +304,11 @@ document.documentElement.classList.add("js");
         </article>
 
         <article class="card project">
-          <img class="project__media" src="assets/img/Projektarbeit_Car.jpg" alt="" loading="lazy" width="1200" height="641">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Projektarbeit_Car.jpg" alt="" loading="lazy" width="1200" height="641">
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project5.title">Analyse kritischer Fahrszenarien in Rennsimulationen</h3>
             <p class="project__text" data-i18n="project5.text">Konzeption und Implementierung einer Werkzeugkette zur automatisierten Identifikation und Analyse sicherheitskritischer Szenarien im fahrphysikalischen Grenzbereich, für das Testen autonomer Fahrfunktionen.</p>
@@ -300,8 +322,16 @@ document.documentElement.classList.add("js");
           </div>
         </article>
 
-        <article class="card project">
-          <img class="project__media" src="assets/img/project-3.svg" alt="" loading="lazy" width="800" height="450">
+        <article class="card project project--featured">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Slopes_Aerial.jpg" alt="" loading="lazy" width="943" height="530">
+            <span class="project__live">
+              <span class="project__live-dot" aria-hidden="true"></span>
+              <span data-i18n="project6.live">Interaktive WebGL-Demo</span>
+            </span>
+
+          </button>
           <div class="project__body">
             <h3 data-i18n="project6.title">Interaktive 3D-Visualisierung von Skitouren und Pistenhistorie</h3>
             <p class="project__text" data-i18n="project6.text">Browserbasierte 3D-Geländedarstellung und GPS-Track-Analyse mit WebGL und Three.js.</p>
@@ -313,7 +343,7 @@ document.documentElement.classList.add("js");
             </ul>
             <p class="project__note" data-i18n="project6.institution">Eigenprojekt</p>
             <p class="project__links">
-              <a href="/slopes/" target="_blank" rel="noopener noreferrer" data-i18n="project6.demo">Live-Demo ansehen</a>
+              <a class="btn btn--primary" href="/slopes/" target="_blank" rel="noopener noreferrer" data-i18n="project6.demo">Live-Demo ansehen</a>
               <a href="https://github.com/MauriceBa/computational-portfolio/tree/main/slopes" target="_blank" rel="noopener noreferrer" data-i18n="project6.repo">Quellcode ansehen</a>
             </p>
           </div>
@@ -397,6 +427,19 @@ document.documentElement.classList.add("js");
     </nav>
   </div>
 </footer>
+
+  <!-- ============================== LIGHTBOX ============================== -->
+  <div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-caption">
+    <div class="lightbox__backdrop" data-lightbox-dismiss aria-hidden="true"></div>
+    <figure class="lightbox__figure">
+      <img id="lightbox-image" class="lightbox__image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+
+      <figcaption class="lightbox__meta">
+        <p id="lightbox-caption" class="lightbox__caption"></p>
+        <button id="lightbox-close" class="lightbox__close" type="button" data-i18n="lightbox.close">Vorschau schließen</button>
+      </figcaption>
+    </figure>
+  </div>
 
 </body>
 </html>

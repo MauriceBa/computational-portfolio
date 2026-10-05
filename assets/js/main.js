@@ -436,9 +436,395 @@
         }
       }
 
+      /* ------------------------ hero flow field ------------------------ */
+
+      /* Potential flow past two fixed cylinders, with the pointer acting as a
+       * third obstacle the streamlines bend around. This is the page's one
+       * authored motion moment, so it gets the care: every buffer is allocated
+       * in setup() (never in the frame loop), the loop stops while the hero is
+       * off screen or the tab is hidden, and under prefers-reduced-motion the
+       * field is warmed up once and drawn as a still image. */
+      function initHeroField() {
+        var canvas = doc.querySelector(".hero__mesh");
+        var hero = doc.getElementById("hero");
+        if (!canvas || !hero || !canvas.getContext) return;
+
+        var ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        var TRAIL = 14;
+        var BASE_SPEED = 54; /* px/s, rightwards */
+        var reducedMotion = window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var width = 1, height = 1;
+        var count = 0, head = 0;
+        var pos = null; /* Float32Array(count * TRAIL * 2) */
+        var obstacles = [];
+        var pointer = { x: -9999, y: -9999, on: false };
+        var accent = "#1d4ed8";
+        var lastTheme = null;
+        var rafId = 0, lastTime = 0, running = false;
+        var onScreen = true, pageVisible = !doc.hidden;
+        var resizePending = false;
+
+        function readAccent() {
+          var value = window.getComputedStyle(doc.documentElement)
+            .getPropertyValue("--color-accent");
+          return (value || "").trim() || "#1d4ed8";
+        }
+
+        function setup() {
+          var rect = hero.getBoundingClientRect();
+          width = Math.max(1, Math.round(rect.width));
+          height = Math.max(1, Math.round(rect.height));
+          var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+          canvas.width = Math.round(width * dpr);
+          canvas.height = Math.round(height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          /* Placed as fractions of the box so the composition holds at any
+           * viewport size instead of drifting off canvas. */
+          obstacles = [
+            { x: width * 0.27, y: height * 0.42, r: Math.max(46, height * 0.11) },
+            { x: width * 0.68, y: height * 0.66, r: Math.max(34, height * 0.08) }
+          ];
+
+          count = Math.max(60, Math.min(220, Math.round((width * height) / 8200)));
+          pos = new Float32Array(count * TRAIL * 2);
+          head = 0;
+
+          for (var i = 0; i < count; i++) {
+            var x = Math.random() * width;
+            var y = Math.random() * height;
+            for (var t = 0; t < TRAIL; t++) {
+              pos[(i * TRAIL + t) * 2] = x;
+              pos[(i * TRAIL + t) * 2 + 1] = y;
+            }
+          }
+
+          accent = readAccent();
+          lastTheme = doc.documentElement.getAttribute("data-theme");
+        }
+
+        /* Perturbation of the free stream by one cylinder (a doublet). Inside
+         * the cylinder the analytic form divides by ~0, so particles get a
+         * radial escape velocity instead of exploding. Writes into a shared
+         * scratch object: the frame loop allocates nothing. */
+        var flowOut = { u: 0, v: 0 };
+
+        function applyObstacle(x, y, ox, oy, radius, flow) {
+          var dx = x - ox, dy = y - oy;
+          var r2 = dx * dx + dy * dy;
+          var rMax = radius * radius;
+
+          if (r2 < rMax) {
+            var dist = Math.sqrt(r2) || 1;
+            flowOut.u = (dx / dist) * 90;
+            flowOut.v = (dy / dist) * 90;
+            return flowOut;
+          }
+
+          var k = (flow * rMax) / (r2 * r2);
+          flowOut.u = -k * (dx * dx - dy * dy);
+          flowOut.v = -k * 2 * dx * dy;
+          return flowOut;
+        }
+
+        function step(dt) {
+          head = (head + 1) % TRAIL;
+
+          for (var i = 0; i < count; i++) {
+            var prev = (i * TRAIL + (head + TRAIL - 1) % TRAIL) * 2;
+            var x = pos[prev], y = pos[prev + 1];
+            var u = BASE_SPEED, v = 0;
+            var o, add;
+
+            for (o = 0; o < obstacles.length; o++) {
+              add = applyObstacle(x, y, obstacles[o].x, obstacles[o].y, obstacles[o].r, BASE_SPEED);
+              u += add.u; v += add.v;
+            }
+
+            if (pointer.on) {
+              add = applyObstacle(x, y, pointer.x, pointer.y, 58, BASE_SPEED);
+              u += add.u; v += add.v;
+            }
+
+            if (x > width + 16 || y < -24 || y > height + 24) {
+              x = -8; y = Math.random() * height;
+              for (var t = 0; t < TRAIL; t++) {
+                pos[(i * TRAIL + t) * 2] = x;
+                pos[(i * TRAIL + t) * 2 + 1] = y;
+              }
+            }
+
+            var idx = (i * TRAIL + head) * 2;
+            pos[idx] = x + u * dt;
+            pos[idx + 1] = y + v * dt;
+          }
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          ctx.lineWidth = 1;
+          ctx.lineCap = "round";
+          ctx.strokeStyle = accent;
+
+          for (var i = 0; i < count; i++) {
+            ctx.beginPath();
+            for (var t = 0; t < TRAIL; t++) {
+              var k = (i * TRAIL + (head + 1 + t) % TRAIL) * 2;
+              if (t === 0) ctx.moveTo(pos[k], pos[k + 1]);
+              else ctx.lineTo(pos[k], pos[k + 1]);
+            }
+            ctx.globalAlpha = 0.13;
+            ctx.stroke();
+
+            ctx.beginPath();
+            var started = false;
+            for (var s = TRAIL - 5; s < TRAIL; s++) {
+              var j = (i * TRAIL + (head + 1 + s) % TRAIL) * 2;
+              if (!started) { ctx.moveTo(pos[j], pos[j + 1]); started = true; }
+              else ctx.lineTo(pos[j], pos[j + 1]);
+            }
+            ctx.globalAlpha = 0.5;
+            ctx.stroke();
+          }
+
+          ctx.globalAlpha = 1;
+        }
+
+        function warmToStill() {
+          for (var i = 0; i < 260; i++) step(1 / 60);
+          draw();
+        }
+
+        function frameLoop(time) {
+          rafId = 0;
+          if (!running) return;
+
+          var dt = lastTime ? Math.min((time - lastTime) / 1000, 1 / 30) : 1 / 60;
+          lastTime = time;
+
+          var theme = doc.documentElement.getAttribute("data-theme");
+          if (theme !== lastTheme) {
+            lastTheme = theme;
+            accent = readAccent();
+          }
+
+          step(dt);
+          draw();
+          rafId = window.requestAnimationFrame(frameLoop);
+        }
+
+        function evaluate() {
+          var shouldRun = onScreen && pageVisible && !reducedMotion;
+
+          if (shouldRun && !running) {
+            running = true;
+            lastTime = 0;
+            rafId = window.requestAnimationFrame(frameLoop);
+          } else if (!shouldRun && running) {
+            running = false;
+            if (rafId) window.cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
+        }
+
+        function onResize() {
+          if (resizePending) return;
+          resizePending = true;
+          window.requestAnimationFrame(function () {
+            resizePending = false;
+            setup();
+            if (reducedMotion) warmToStill();
+          });
+        }
+
+        setup();
+
+        if (reducedMotion) {
+          warmToStill();
+          return;
+        }
+
+        if (typeof ResizeObserver !== "undefined") {
+          new ResizeObserver(onResize).observe(hero);
+        } else {
+          window.addEventListener("resize", onResize);
+        }
+
+        if (typeof IntersectionObserver !== "undefined") {
+          new IntersectionObserver(function (entries) {
+            onScreen = entries[0].isIntersecting;
+            evaluate();
+          }).observe(hero);
+        }
+
+        doc.addEventListener("visibilitychange", function () {
+          pageVisible = !doc.hidden;
+          evaluate();
+        });
+
+        hero.addEventListener("pointermove", function (event) {
+          var rect = canvas.getBoundingClientRect();
+          pointer.x = event.clientX - rect.left;
+          pointer.y = event.clientY - rect.top;
+          pointer.on = true;
+        }, { passive: true });
+
+        hero.addEventListener("pointerleave", function () {
+          pointer.on = false;
+        }, { passive: true });
+
+        evaluate();
+      }
+
+      /* ------------------------ card reveal ------------------------ */
+
+      function initProjectReveal() {
+        if (typeof IntersectionObserver === "undefined") return;
+        if (window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        var cards = doc.querySelectorAll(".project");
+        if (!cards.length) return;
+
+        /* The class that hides the cards is added here, in the same tick that
+         * the observer revealing them is registered -- so a script that never
+         * runs leaves the cards visible, which is the only safe default. */
+        doc.documentElement.classList.add("reveal");
+
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].style.setProperty("--reveal-delay", Math.min(i, 5) * 60 + "ms");
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+          for (var j = 0; j < entries.length; j++) {
+            if (entries[j].isIntersecting) {
+              entries[j].target.classList.add("is-revealed");
+              observer.unobserve(entries[j].target);
+            }
+          }
+        }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+
+        for (var k = 0; k < cards.length; k++) observer.observe(cards[k]);
+      }
+
+      /* -------------------------- card glow --------------------------- */
+
+      function initCardGlow() {
+        var cards = doc.querySelectorAll(".card");
+
+        for (var i = 0; i < cards.length; i++) {
+          (function (card) {
+            card.addEventListener("pointermove", function (event) {
+              var rect = card.getBoundingClientRect();
+              card.style.setProperty("--glow-x", event.clientX - rect.left + "px");
+              card.style.setProperty("--glow-y", event.clientY - rect.top + "px");
+            }, { passive: true });
+
+            card.addEventListener("pointerleave", function () {
+              card.style.removeProperty("--glow-x");
+              card.style.removeProperty("--glow-y");
+            }, { passive: true });
+          })(cards[i]);
+        }
+      }
+
+      /* --------------------------- lightbox --------------------------- */
+
+      /* Every project image is a button, so the enlarged view is reachable by
+       * keyboard as well as by pointer. The dialog takes focus on open, keeps
+       * Tab inside itself, closes on Escape, the backdrop and its own button,
+       * and hands focus back to the card that opened it. */
+      function initLightbox() {
+        var box = doc.getElementById("lightbox");
+        var image = doc.getElementById("lightbox-image");
+        var caption = doc.getElementById("lightbox-caption");
+        if (!box || !image) return;
+
+        var lastFocus = null;
+        var rootOverflow = "";
+        var bodyOverflow = "";
+
+        function open(trigger) {
+          var img = trigger.querySelector ? trigger.querySelector("img") : null;
+          if (!img) return;
+
+          var card = trigger.closest ? trigger.closest(".project") : null;
+          var heading = card ? card.querySelector("h3") : null;
+          var title = heading ? heading.textContent : "";
+
+          image.src = img.currentSrc || img.src;
+          image.alt = title;
+          if (caption) caption.textContent = title;
+
+          lastFocus = doc.activeElement;
+          /* The viewport takes its overflow from the root element, so locking
+           * only <body> leaves the page scrollable behind the dialog. */
+          rootOverflow = doc.documentElement.style.overflow;
+          bodyOverflow = doc.body.style.overflow;
+          doc.documentElement.style.overflow = "hidden";
+          doc.body.style.overflow = "hidden";
+          box.hidden = false;
+
+          var closeBtn = doc.getElementById("lightbox-close");
+          if (closeBtn) closeBtn.focus();
+        }
+
+        function close() {
+          if (box.hidden) return;
+          box.hidden = true;
+          doc.documentElement.style.overflow = rootOverflow;
+          doc.body.style.overflow = bodyOverflow;
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+          lastFocus = null;
+        }
+
+        doc.addEventListener("click", function (event) {
+          var target = event.target;
+          if (!target || !target.closest) return;
+
+          var trigger = target.closest(".project__zoom");
+          if (trigger) {
+            open(trigger);
+            return;
+          }
+
+          if (target.closest("[data-lightbox-dismiss]") ||
+              target.id === "lightbox-close") {
+            close();
+          }
+        });
+
+        doc.addEventListener("keydown", function (event) {
+          if (box.hidden) return;
+
+          if (event.key === "Escape" || event.key === "Esc") {
+            close();
+            return;
+          }
+
+          if (event.key === "Tab") {
+            var closeBtn = doc.getElementById("lightbox-close");
+            if (closeBtn) {
+              event.preventDefault();
+              closeBtn.focus();
+            }
+          }
+        });
+      }
+
       /* --------------------------- boot --------------------------- */
       //
       // Last, so every element the language path touches already exists.
+
+      initHeroField();
+      initProjectReveal();
+      initCardGlow();
+      initLightbox();
 
       var storedLang = readPref(STORAGE_KEYS.lang);
       setLanguage(["de", "en", "fr"].indexOf(storedLang) === -1 ? "de" : storedLang);

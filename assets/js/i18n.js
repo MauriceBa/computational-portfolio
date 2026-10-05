@@ -32,6 +32,8 @@ const I18N = {
 
     "hero.name": "Maurice Bastard",
     "hero.role": "Computational Engineer | Simulation, Optimization & HPC",
+    "project.zoom": "Enlarge image",
+    "lightbox.close": "Close preview",
     "hero.availability": "Available from January 2027",
     "hero.intro": "Developing physics-based simulation pipelines, CFD models, and automated optimization algorithms.",
     "hero.cta.projects": "View projects",
@@ -127,6 +129,7 @@ const I18N = {
     "project6.tag2": "JavaScript",
     "project6.tag3": "WebGL",
     "project6.tag4": "GPS/GeoJSON",
+    "project6.live": "Interactive WebGL demo",
 
     "research.heading": "Research & publications",
     "research.1.title": "Fluid dynamic characterization and operating window analysis of a pilot-scale multiphase loop reactor for biotechnological applications",
@@ -174,6 +177,8 @@ const I18N = {
 
     "hero.name": "Maurice Bastard",
     "hero.role": "Ingénieur en calcul scientifique | Simulation, optimisation & HPC",
+    "project.zoom": "Agrandir l’image",
+    "lightbox.close": "Fermer l’aperçu",
     "hero.availability": "Disponible à partir de janvier 2027",
     "hero.intro": "Développement de pipelines de simulation physique, de modèles CFD et d'algorithmes d'optimisation automatisés.",
     "hero.cta.projects": "Voir les projets",
@@ -269,6 +274,7 @@ const I18N = {
     "project6.tag2": "JavaScript",
     "project6.tag3": "WebGL",
     "project6.tag4": "GPS/GeoJSON",
+    "project6.live": "Démo WebGL interactive",
 
     "research.heading": "Recherche et publications",
     "research.1.title": "Caractérisation fluidodynamique et analyse de la fenêtre opératoire d'un réacteur à boucle multiphasique à l'échelle pilote pour des applications biotechnologiques",

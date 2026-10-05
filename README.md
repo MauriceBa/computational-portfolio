@@ -123,12 +123,10 @@ text replacement deletes them. A test enforces this; if you hit it, use
 ## What is still placeholder
 
 The text content is complete: **zero square-bracket placeholders remain** on any
-page, and `tests/placeholders.test.js` enforces that. Two binary assets are still
-generated stand-ins:
+page, and `tests/placeholders.test.js` enforces that. All six project images are
+real. One generated stand-in remains:
 
-1. **One of the six project images** is still an SVG placeholder:
-   `project-3.svg` (ski visualiser). The other five are real.
-2. **`assets/img/og-image.png`** is a gradient with no text on it.
+1. **`assets/img/og-image.png`** is a gradient with no text on it.
 
 Check for yourself:
 
@@ -351,6 +349,11 @@ and nothing to license.
 | Project grid | `#project-grid` | six cards, always all visible; no filter |
 | Scroll spy | header nav | `IntersectionObserver`; marks the active link with `aria-current` |
 | Contact form | `#contact-form` | **has no backend.** GitHub Pages cannot receive submissions, so it opens the visitor's mail client via `mailto:`. Nothing is sent or stored. |
+| Hero flow field | `.hero__mesh` | canvas behind the hero: potential flow past two cylinders, with the pointer as a third obstacle the streamlines bend around. Allocates only on resize, stops while the hero is off screen or the tab is hidden, and draws a single still frame under `prefers-reduced-motion` |
+| Card reveal | `.project` | the class that hides the cards is added only when `IntersectionObserver` exists *and* motion is allowed, in the same tick as the observer; `prefers-reduced-motion` and `@media print` both force them visible |
+| Card glow | `.card` | pointer-tracked gradient on a pseudo-element stacked below the card's content, so text is never tinted; without JS the gradient stays parked off card |
+| Image lightbox | `.project__zoom` → `#lightbox` | every project image is a button; the dialog closes on Escape, backdrop or its own button, keeps Tab inside itself, locks page scroll, and returns focus to the card |
+| Featured card | `.project--featured` | the ski visualiser spans the full grid row, carries the live badge and a primary-styled demo button |
 
 ### Browser storage
 
@@ -365,7 +368,7 @@ device and are described in the privacy page. Clearing site data removes them.
 - Full keyboard operation, visible focus rings, `aria-pressed` on all toggles.
 - Status changes (validation failures) go through `aria-live`.
 - `prefers-reduced-motion` and `prefers-contrast: more` are both honoured.
-- With JavaScript disabled the site still renders completely in German, all three
+- With JavaScript disabled the site still renders completely in German, all six
   project cards are present, and the in-page navigation stays reachable at every
   screen width — the collapsed menu falls back to an always-open list, so a
   scripting-disabled visitor never gets a dead hamburger button. This is
@@ -386,7 +389,9 @@ after editing content.
       clean; verify with
       `Select-String -Path index.html, impressum.html, datenschutz.html, assets/js/i18n.js -Pattern '\[.+?\]'`
       — leave this README out of the search, it contains bracketed examples
-- [ ] `project-3.svg` replaced with a real project image
+- [x] `project-3.svg` replaced with a real project image (now `Slopes_Aerial.jpg`)
+- [ ] Repository settings: Pages source set to **GitHub Actions**
+- [ ] Repository secret **`CESIUM_ION_TOKEN`** added
 - [ ] Both legal pages reviewed by a lawyer
 - [ ] The privacy page's "no cookies, no third parties" claim still true
 - [ ] `assets/img/og-image.png` replaced — it is an abstract placeholder with no text

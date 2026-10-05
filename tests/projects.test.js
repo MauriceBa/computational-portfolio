@@ -14,7 +14,10 @@ const { I18N } = require("../assets/js/i18n.js");
 const ROOT = path.join(__dirname, "..");
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 
-const cards = [...html.matchAll(/<article class="card project"[\s\S]*?<\/article>/g)].map((m) => m[0]);
+/* [^"]* after the two base classes: the ski visualiser card carries an extra
+ * project--featured class, and a stricter pattern would silently stop seeing it
+ * -- turning a layout change into a "missing project" failure. */
+const cards = [...html.matchAll(/<article class="card project[^"]*"[\s\S]*?<\/article>/g)].map((m) => m[0]);
 
 test("all six projects are present", () => {
   assert.equal(cards.length, 6, `expected 6 project cards, found ${cards.length}`);

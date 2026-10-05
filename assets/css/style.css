@@ -15,6 +15,9 @@
   --color-accent-contrast: #ffffff;
   --color-border: #7d8896;
   --color-hairline: #dde3ec;
+  /* Status colour for the "live demo" dot. Chosen per theme so the dot stays
+   * legible against its card rather than being the same green everywhere. */
+  --color-live: #15803d;
   --color-shadow: 15 23 42;
 
   --space-1: 0.25rem;
@@ -48,6 +51,8 @@
   --container: 68rem;
   --header-h: 4rem;
   --speed: 180ms;
+  /* Confident deceleration for the entrances this page authors. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] {
@@ -59,6 +64,7 @@
   --color-accent-contrast: #0b1120;
   --color-border: #64748b;
   --color-hairline: #232f4a;
+  --color-live: #4ade80;
   --color-shadow: 0 0 0;
 }
 
@@ -273,6 +279,7 @@ a:hover {
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: var(--space-5);
@@ -280,6 +287,33 @@ a:hover {
   border-radius: var(--radius-lg);
   background: var(--color-bg);
   box-shadow: var(--shadow-1);
+}
+
+/* Pointer-tracked glow. The gradient sits on a pseudo-element that is stacked
+ * BELOW the card's children (they are positioned with z-index 1), so the glow
+ * never tints the text it passes under. Without JS the position stays parked
+ * far outside the card, which keeps the gradient invisible. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(16rem 16rem at var(--glow-x, -40rem) var(--glow-y, -40rem),
+    color-mix(in srgb, var(--color-accent) 11%, transparent), transparent 68%);
+  opacity: 0;
+  transition: opacity var(--speed) ease;
+  pointer-events: none;
+}
+
+.card:hover::after,
+.card:focus-within::after {
+  opacity: 1;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cards {
@@ -659,6 +693,212 @@ a:hover {
   font-size: var(--text-sm);
 }
 
+/* -- hero mesh -- */
+
+/* The canvas paints a flow field (see initHeroField in main.js). It stays
+ * transparent so the CSS grid behind it remains visible; only the streamlines
+ * are drawn. */
+.hero__mesh {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* -- project media as a lightbox trigger -- */
+
+.project__zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+/* -- featured project -- */
+
+/* The ski visualiser is the only card with a live, interactive demo, so it
+ * breaks the grid instead of sitting in it like the five static ones. */
+@media (min-width: 60.01rem) {
+  .project--featured {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .project--featured .project__zoom {
+    flex: 0 0 42%;
+    align-self: stretch;
+  }
+
+  .project--featured .project__media {
+    height: 100%;
+    aspect-ratio: auto;
+    border-right: 1px solid var(--color-hairline);
+    border-bottom: 0;
+  }
+
+  .project--featured .project__body {
+    flex: 1;
+    padding: var(--space-6);
+  }
+}
+
+/* -- live badge -- */
+
+.project__live {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.35em 0.85em;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.project__live-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-live);
+  animation: live-pulse 2.4s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-live) 55%, transparent);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--color-live) 0%, transparent);
+  }
+}
+
+/* -- card reveal -- */
+
+/* Applied only when JS confirms IntersectionObserver AND the visitor has not
+ * asked for reduced motion (see initProjectReveal). Without that class every
+ * card is simply visible: a failed script must never hide the work. */
+.reveal .project {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.reveal .project.is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* -- lightbox -- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+  backdrop-filter: blur(10px);
+  animation: lightbox-fade 260ms var(--ease-out) both;
+}
+
+.lightbox__figure {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: min(100%, 68rem);
+  margin: 0;
+  animation: lightbox-rise 340ms var(--ease-out) both;
+}
+
+.lightbox__image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 74vh;
+  margin-inline: auto;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+}
+
+/* Caption and close button share a solid strip so both stay readable over
+ * whatever page content shows through the translucent backdrop. */
+.lightbox__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.lightbox__caption {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.lightbox__close {
+  padding: 0.55em 1.15em;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--speed) ease;
+}
+
+.lightbox__close:hover {
+  background: var(--color-surface);
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lightbox-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+
 /* -- research -- */
 
 .entries {
@@ -932,12 +1172,32 @@ a:hover {
     scroll-behavior: auto;
   }
 
+  /* The reveal class is only ever added when motion is allowed, but an
+   * override can also arrive later (assistive tech, emulation). Cards must
+   * never stay invisible because of a preference. */
+  .reveal .project {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .reveal .project {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .lightbox,
+  .hero__mesh {
+    display: none !important;
   }
 }
 

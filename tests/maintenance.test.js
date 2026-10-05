@@ -142,18 +142,23 @@ test("data-i18n never lands on an element that has child markup", () => {
       continue;
     }
 
-    // Match this specific opening tag up to its own closing tag.
-    const paired = new RegExp(
-      `<${name}\\b[^>]*\\sdata-i18n="[^"]*"[^>]*>([\\s\\S]*?)</${name}>`
-    ).exec(html);
+    // Match THIS opening tag up to its own closing tag. Anchoring on the
+    // opening tag's position matters: a name-based regex would keep matching
+    // the first <button> on the page and report its children against every
+    // later button that also carries data-i18n.
+    const start = html.indexOf(opening);
+    const closeTag = `</${name}>`;
+    const end = html.indexOf(closeTag, start + opening.length);
 
-    if (!paired) {
+    if (start < 0 || end < 0) {
       offenders.push(`<${name}> with data-i18n could not be paired with a closing tag`);
       continue;
     }
 
-    if (paired[1].includes("<")) {
-      offenders.push(`<${name}> with data-i18n contains child markup: ${paired[1].slice(0, 60)}`);
+    const content = html.slice(start + opening.length, end);
+
+    if (content.includes("<")) {
+      offenders.push(`<${name}> with data-i18n contains child markup: ${content.slice(0, 60)}`);
     }
   }
 
