@@ -90,6 +90,21 @@ test("the viewer offers playback over the observation timeline", () => {
   }
 });
 
+test("the viewer scopes map and playback to a selected day", () => {
+  const app = readApp();
+
+  assert.match(app, /id="date-filter"/, "no date filter next to the balloon filter");
+  assert.match(app, /Alle Tage/, "the all-days option is missing");
+  assert.match(app, /function dayPoints/, "points are not scoped to the selected day");
+  assert.match(app, /state\.dateTouched/,
+    "the newest-day default could not be overridden by the user");
+  assert.match(app, /rebuildTimeline\(\)/,
+    "the playback timeline is not rebuilt from the day's timestamps");
+  // The balloon options must narrow down to the balloons actually flying that day.
+  assert.match(app, /activeBalloons\(\)\.map/,
+    "the balloon filter is not restricted to the selected day");
+});
+
 test("the portfolio links to the app and to its repository directory", () => {
   const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 

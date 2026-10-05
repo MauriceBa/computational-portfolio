@@ -120,6 +120,10 @@
     <div class="stats-grid" id="stats"></div>
 
     <div class="toolbar">
+      <label for="date-filter" style="font-size:0.8rem;color:var(--muted)">Tag:</label>
+      <select id="date-filter" aria-label="Flugtag filtern">
+        <option value="">📅 Alle Tage</option>
+      </select>
       <label for="balloon-filter" style="font-size:0.8rem;color:var(--muted)">Ballon:</label>
       <select id="balloon-filter"><option value="all">Alle Ballons</option></select>
       <button class="btn" id="btn-load-shard" type="button">⬇ Ältere Daten laden</button>
@@ -158,8 +162,11 @@
     const state = {
       balloons: new Map(),
       shardQueue: [],       // history files from the manifest, newest first
-      timeline: [],         // sorted unique observation timestamps (ms)
+      timeline: [],         // sorted unique timestamps in scope (ms)
       filter: "all",
+      date: null,           // "YYYY-MM-DD" scope, null = all days
+      dates: [],            // [{date, balloons}] newest first
+      dateTouched: false,   // user picked a date -> no more auto-default
       mode: "2d",
       map: null,
       pathLayer: null,
@@ -243,7 +250,7 @@
       const last = b.points[b.points.length - 1];
       const t = Date.parse(p.time);
       if (last && last.t === t && last.lat === p.lat && last.lon === p.lon) return;
-      const pt = { lat: p.lat, lon: p.lon, altM: p.altM, speed: p.speed || 0, time: p.time, t: t };
+      const pt = { lat: p.lat, lon: p.lon, altM: p.altM, speed: p.speed || 0, time: p.time, t: t, day: p.time.slice(0, 10) };
       b.points.push(pt);
       if (p.reg && p.reg !== "N/A") b.reg = p.reg;
       if (p.id) b.id = p.id;
@@ -269,7 +276,8 @@
     }
 
     function finalize() {
-      for (const b of state.balloons.values()) {
+      const byDay = new Map(); // day -> Set(callsign)
+      for (const [cs, b] of state.balloons.entries()) {
         b.points.sort((x, y) => x.t - y.t);
         b.maxAlt = b.points.reduce((m, p) => Math.max(m, p.altM), 0);
         b.first = b.points[0].t;
@@ -277,17 +285,56 @@
         b.speedAvg = b.points.length
           ? b.points.reduce((s, p) => s + (p.speed || 0), 0) / b.points.length
           : 0;
+        for (const p of b.points) {
+          let set = byDay.get(p.day);
+          if (!set) { set = new Set(); byDay.set(p.day, set); }
+          set.add(cs);
+        }
       }
+      state.dates = [...byDay.entries()]
+        .map(([date, set]) => ({ date, balloons: set.size }))
+        .sort((a, b) => (a.date < b.date ? 1 : -1));
+      rebuildTimeline();
+    }
+
+    /* --- Date & balloon scope ------------------------------------------ */
+    function dayPoints(b) {
+      return state.date ? b.points.filter((p) => p.day === state.date) : b.points;
+    }
+
+    // Every balloon with at least one point in the current date scope.
+    function activeBalloons() {
+      const out = [];
+      for (const [cs, b] of state.balloons.entries()) {
+        const pts = dayPoints(b);
+        if (pts.length) out.push([cs, b, pts]);
+      }
+      return out;
+    }
+
+    // What the maps actually draw: date scope + balloon filter.
+    function visibleBalloons() {
+      if (state.filter === "all") return activeBalloons();
+      return activeBalloons().filter(([cs]) => cs === state.filter);
+    }
+
+    function rebuildTimeline() {
       const times = new Set();
-      for (const b of state.balloons.values()) for (const p of b.points) times.add(p.t);
-      state.timeline = [...times].sort((a, c) => a - c);
+      for (const [, , pts] of activeBalloons()) for (const p of pts) times.add(p.t);
+      state.timeline = [...times].sort((a, b) => a - b);
       state.playIdx = state.timeline.length - 1;
     }
 
-    function visibleBalloons() {
-      if (state.filter === "all") return [...state.balloons.entries()];
-      const b = state.balloons.get(state.filter);
-      return b ? [[state.filter, b]] : [];
+    function ensureValidSelections() {
+      if (!state.dateTouched) {
+        state.date = state.dates.length ? state.dates[0].date : null; // newest active day
+      } else if (state.date && !state.dates.some((d) => d.date === state.date)) {
+        state.date = null;
+      }
+      if (state.filter !== "all" &&
+          !activeBalloons().some(([cs]) => cs === state.filter)) {
+        state.filter = "all";
+      }
     }
 
     // ---- 2D --------------------------------------------------------------
@@ -308,8 +355,8 @@
       state.markers.clear();
       let bounds = [];
 
-      for (const [cs, b] of visibleBalloons()) {
-        for (const run of groupRuns(b.points)) {
+      for (const [cs, b, pts] of visibleBalloons()) {
+        for (const run of groupRuns(pts)) {
           const line = L.polyline(
             run.pts.map((p) => [p.lat, p.lon]),
             { color: altColor(ALT_STOPS[run.b][0]), weight: 3, opacity: 0.85 }
@@ -317,7 +364,7 @@
           line.on("click", () => inspect(cs));
           line.addTo(state.pathLayer);
         }
-        const last = b.points[b.points.length - 1];
+        const last = pts[pts.length - 1];
         const m = L.circleMarker([last.lat, last.lon], {
           radius: 7, color: "#fff", weight: 2,
           fillColor: altColor(last.altM), fillOpacity: 1
@@ -326,13 +373,19 @@
         m.on("click", () => inspect(cs));
         m.addTo(state.pathLayer);
         state.markers.set(cs, m);
-        for (const p of b.points) bounds.push([p.lat, p.lon]);
+        for (const p of pts) bounds.push([p.lat, p.lon]);
       }
 
-      if (bounds.length && state.filter !== "all") {
-        state.map.fitBounds(bounds, { maxZoom: 9, padding: [30, 30] });
-      } else if (bounds.length) {
-        state.map.fitBounds(bounds, { maxZoom: 7, padding: [30, 30] });
+      // Re-centre only when the user changes scope (day/balloon), not on every
+      // background shard load, so zooming is never yanked away.
+      const scope = state.date + "|" + state.filter;
+      const shouldFit = bounds.length > 0 && scope !== state.lastScope;
+      state.lastScope = scope;
+      if (shouldFit) {
+        state.map.fitBounds(bounds, {
+          maxZoom: state.filter !== "all" || state.date ? 9 : 7,
+          padding: [30, 30]
+        });
       }
       applyPlaybackToMarkers();
     }
@@ -369,26 +422,28 @@
       state.cesiumDots.removeAll();
 
       let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
-      for (const [cs, b] of visibleBalloons()) {
-        for (const run of groupRuns(b.points)) {
+      for (const [cs, b, pts] of visibleBalloons()) {
+        for (const run of groupRuns(pts)) {
           state.cesiumPaths.add({
             positions: run.pts.map((p) => Cesium.Cartesian3.fromDegrees(p.lon, p.lat, Math.max(p.altM, 0))),
             width: 4,
             material: cesiumColor(ALT_STOPS[run.b][0])
           });
         }
-        for (const p of b.points) {
+        for (const p of pts) {
           minLat = Math.min(minLat, p.lat); maxLat = Math.max(maxLat, p.lat);
           minLon = Math.min(minLon, p.lon); maxLon = Math.max(maxLon, p.lon);
         }
-        const last = b.points[b.points.length - 1];
+        const last = pts[pts.length - 1];
         state.cesiumDots.add({
           position: Cesium.Cartesian3.fromDegrees(last.lon, last.lat, Math.max(last.altM, 0)),
           color: cesiumColor(last.altM), pixelSize: 9,
           outlineColor: Cesium.Color.WHITE, outlineWidth: 2
         });
       }
-      if (maxLat > minLat) {
+      const scope = state.date + "|" + state.filter;
+      if (maxLat > minLat && scope !== state.last3dScope) {
+        state.last3dScope = scope;
         state.cesium.camera.flyTo({
           destination: Cesium.Rectangle.fromDegrees(
             Math.max(minLon - 4, -180), Math.max(minLat - 3, -85),
@@ -414,11 +469,11 @@
     }
 
     // ---- Playback ----------------------------------------------------------
-    function positionAt(b, t) {
-      let lo = 0, hi = b.points.length - 1, res = null;
+    function positionAt(pts, t) {
+      let lo = 0, hi = pts.length - 1, res = null;
       while (lo <= hi) {
         const mid = (lo + hi) >> 1;
-        if (b.points[mid].t <= t) { res = b.points[mid]; lo = mid + 1; }
+        if (pts[mid].t <= t) { res = pts[mid]; lo = mid + 1; }
         else hi = mid - 1;
       }
       return res;
@@ -427,11 +482,11 @@
     function applyPlaybackToMarkers() {
       const t = state.timeline[state.playIdx];
       if (!t) return;
-      for (const [cs, b] of visibleBalloons()) {
+      for (const [cs, , pts] of visibleBalloons()) {
         const m = state.markers.get(cs);
-        const p = positionAt(b, t);
+        const p = positionAt(pts, t);
         if (m && p) m.setLatLng([p.lat, p.lon]);
-        if (m && !p) m.setLatLng([b.points[0].lat, b.points[0].lon]);
+        if (m && !p) m.setLatLng([pts[0].lat, pts[0].lon]);
       }
       $("play-time").textContent = new Date(t).toLocaleString("de-DE");
       $("play-slider").value = state.timeline.length > 1
@@ -445,8 +500,8 @@
       if (!t) return;
       const visible = visibleBalloons();
       for (let i = 0; i < visible.length && i < state.cesiumDots.length; i++) {
-        const [, b] = visible[i];
-        const p = positionAt(b, t) || b.points[b.points.length - 1];
+        const pts = visible[i][2];
+        const p = positionAt(pts, t) || pts[pts.length - 1];
         state.cesiumDots.get(i).position =
           Cesium.Cartesian3.fromDegrees(p.lon, p.lat, Math.max(p.altM, 0));
       }
@@ -522,9 +577,43 @@
 
     function updateFilterOptions() {
       const sel = $("balloon-filter");
-      const names = [...state.balloons.keys()].sort();
+      const names = activeBalloons().map(([cs]) => cs).sort();
+      if (state.filter !== "all" && !names.includes(state.filter)) state.filter = "all";
       sel.innerHTML = '<option value="all">Alle Ballons</option>' +
         names.map((n) => '<option value="' + n + '"' + (n === state.filter ? " selected" : "") + ">" + n + "</option>").join("");
+    }
+
+    function updateDateOptions() {
+      const sel = $("date-filter");
+      const dd = (iso) => iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4);
+      sel.innerHTML = '<option value="">📅 Alle Tage</option>' +
+        state.dates.map((d) =>
+          '<option value="' + d.date + '">' + dd(d.date) + " (" + d.balloons +
+          " Ballon" + (d.balloons === 1 ? "" : "s") + ")</option>").join("");
+      sel.value = state.date || "";
+    }
+
+    // Re-apply scope after a filter/date change or new data: options, timeline,
+    // both maps and the playback head.
+    function applyScopeChange() {
+      ensureValidSelections();
+      updateDateOptions();
+      updateFilterOptions();
+      rebuildTimeline();
+      render2D();
+      if (state.cesium) render3D();
+      applyPlaybackToMarkers();
+      if (state.cesiumDots) applyPlaybackToDots();
+      $("play-slider").disabled = state.timeline.length < 2;
+      $("inspector").classList.remove("show");
+    }
+
+    function refreshData() {
+      finalize();
+      applyScopeChange();
+      updateStats();
+      updateShardButton();
+      $("loader").style.display = "none";
     }
 
     function updateShardButton() {
@@ -545,12 +634,7 @@
       const data = await getJSON("app-data/" + file);
       if (Array.isArray(data)) {
         ingestHistory(data);
-        finalize();
-        render2D();
-        if (state.cesium) render3D();
-        updateStats();
-        updateFilterOptions();
-        applyPlaybackToMarkers();
+        refreshData();
       }
       $("play-status").textContent = "";
       updateShardButton();
@@ -574,34 +658,21 @@
       const loadActive = async () => {
         const data = await getJSON("app-data/" + newest.file);
         if (Array.isArray(data)) ingestHistory(data);
-        finalize();
-        updateStats();
-        updateFilterOptions();
-        render2D();
-        applyPlaybackToMarkers();
-        $("loader").style.display = "none";
-        updateShardButton();
+        refreshData();
       };
 
       if (state.balloons.size) {
-        finalize();
-        updateStats();
-        updateFilterOptions();
-        render2D();
-        applyPlaybackToMarkers();
-        $("loader").style.display = "none";
-        updateShardButton();
+        refreshData();
         window.addEventListener("load", () => setTimeout(loadActive, 300), { once: true });
       } else {
         await loadActive();
       }
 
       if (!state.balloons.size) {
+        $("loader").style.display = "flex";
         $("loader").innerHTML = "<span>Keine Flugdaten verfügbar – die nächste Aktualisierung läuft in Kürze.</span>";
         $("header-subtitle").textContent = "Noch keine Daten";
       }
-      const slider = $("play-slider");
-      slider.disabled = state.timeline.length < 2;
     }
 
     // ---- Events ---------------------------------------------------------------
@@ -611,11 +682,13 @@
     $("btn-load-shard").addEventListener("click", loadNextShard);
     $("balloon-filter").addEventListener("change", (e) => {
       state.filter = e.target.value;
-      render2D();
-      if (state.cesium) render3D();
-      $("inspector").classList.remove("show");
-      const b = state.balloons.get(state.filter);
-      if (b) inspect(state.filter);
+      applyScopeChange();
+      if (state.filter !== "all") inspect(state.filter);
+    });
+    $("date-filter").addEventListener("change", (e) => {
+      state.date = e.target.value || null;
+      state.dateTouched = true;
+      applyScopeChange();
     });
     $("play-slider").addEventListener("input", (e) => {
       if (!state.timeline.length) return;
