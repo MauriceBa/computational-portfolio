@@ -1,0 +1,37 @@
+name: Quality gates
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Lighthouse >= 90 in all four categories (portfolio acceptance
+      # criterion) plus an axe scan of the homepage. Everything runs against
+      # a local static server, so no deploy is needed to measure.
+      - name: Lighthouse and axe
+        run: |
+          python3 -m http.server 8080 > /dev/null 2>&1 &
+          sleep 2
+
+          npx --yes lighthouse http://localhost:8080 \
+            --quiet \
+            --chrome-flags="--headless=new --no-sandbox" \
+            --output=json --output-path=lighthouse.json
+
+          node -e '
+            const r = require("./lighthouse.json");
+            const scores = Object.fromEntries(
+              Object.entries(r.categories).map(([k, c]) => [k, Math.round(c.score * 100)])
+            );
+            console.log(scores);
+            const bad = Object.entries(scores).filter(([, v]) => v < 90);
+            if (bad.length) { console.error("below 90:", bad); process.exit(1); }
+          '
+
+          npx --yes @axe-core/cli http://localhost:8080 --exit

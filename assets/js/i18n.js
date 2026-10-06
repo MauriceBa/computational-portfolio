@@ -36,6 +36,7 @@ const I18N = {
     "lightbox.close": "Close preview",
     "hero.availability": "Available from January 2027",
     "hero.intro": "Developing physics-based simulation pipelines, CFD models, and automated optimization algorithms.",
+  "hero.goal": "Starting in January 2027, I am seeking an entry-level position in computational engineering, focusing on numerical simulation, data-driven modeling, and scientific software development.",
     "hero.cta.projects": "View projects",
     "hero.cta.contact": "Get in touch",
     "hero.cta.resume": "Download CV",
@@ -197,7 +198,8 @@ const I18N = {
     "lightbox.close": "Fermer l’aperçu",
     "hero.availability": "Disponible à partir de janvier 2027",
     "hero.intro": "Développement de pipelines de simulation physique, de modèles CFD et d'algorithmes d'optimisation automatisés.",
-    "hero.cta.projects": "Voir les projets",
+    "hero.goal": "À partir de janvier 2027, je recherche un premier poste en ingénierie numérique, axé sur la simulation numérique, la modélisation basée sur les données et le développement de logiciels scientifiques.",
+  "hero.cta.projects": "Voir les projets",
     "hero.cta.contact": "Me contacter",
     "hero.cta.resume": "Télécharger le CV",
 

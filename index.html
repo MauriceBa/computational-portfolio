@@ -127,6 +127,7 @@ document.documentElement.classList.add("js");
       <h1 id="hero-heading" class="hero__name" data-i18n="hero.name">Maurice Bastard</h1>
       <p class="hero__role" data-i18n="hero.role">Computational Engineer | Simulation, Optimierung &amp; HPC</p>
       <p class="hero__intro" data-i18n="hero.intro">Entwicklung physikbasierter Simulationspipelines, CFD-Modelle und automatisierter Optimierungsalgorithmen.</p>
+      <p class="hero__goal" data-i18n="hero.goal">Ab Januar 2027 suche ich den Berufseinstieg im Computational Engineering mit Schwerpunkt auf numerischer Simulation, datengetriebener Modellierung und technischer Softwareentwicklung.</p>
       <div class="hero__actions">
         <a class="btn btn--primary" href="#projects" data-i18n="hero.cta.projects">Projekte ansehen</a>
         <a class="btn btn--ghost" href="#contact" data-i18n="hero.cta.contact">Kontakt aufnehmen</a>
@@ -134,6 +135,9 @@ document.documentElement.classList.add("js");
            download="CV_DE_Maurice_Bastard.pdf"
            data-i18n="hero.cta.resume">Lebenslauf herunterladen</a>
       </div>
+      <p class="hero__mail">
+        <a href="mailto:contact@mauricebastard.de">contact@mauricebastard.de</a>
+      </p>
     </div>
   </section>
 
@@ -283,6 +287,61 @@ document.documentElement.classList.add("js");
           </div>
         </article>
 
+<article class="card project project--featured">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Slopes_Aerial.jpg" alt="" loading="lazy" width="943" height="530">
+            <span class="project__live">
+              <span class="project__live-dot" aria-hidden="true"></span>
+              <span data-i18n="project6.live">Interaktive WebGL-Demo</span>
+            </span>
+
+          </button>
+          <div class="project__body">
+            <h3 data-i18n="project6.title">Interaktive 3D-Visualisierung von Skitouren und Pistenhistorie</h3>
+            <p class="project__text" data-i18n="project6.text">Browserbasierte 3D-Geländedarstellung und GPS-Track-Analyse mit WebGL und Three.js.</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project6.tag1">Three.js</li>
+              <li class="badge" data-i18n="project6.tag2">JavaScript</li>
+              <li class="badge" data-i18n="project6.tag3">WebGL</li>
+              <li class="badge" data-i18n="project6.tag4">GPS/GeoJSON</li>
+            </ul>
+            <p class="project__note" data-i18n="project6.institution">Eigenprojekt</p>
+            <p class="project__links">
+              <a class="btn btn--primary" href="/slopes/" target="_blank" rel="noopener noreferrer" data-i18n="project6.demo">Live-Demo ansehen</a>
+              <a href="https://github.com/MauriceBa/computational-portfolio/tree/main/slopes" target="_blank" rel="noopener noreferrer" data-i18n="project6.repo">Quellcode ansehen</a>
+            </p>
+          </div>
+        </article>
+
+        <article class="card project project--featured">
+          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
+
+            <img class="project__media" src="assets/img/Balloon_Track.svg" alt="" loading="lazy" width="943" height="530">
+            <span class="project__live">
+              <span class="project__live-dot" aria-hidden="true"></span>
+              <span data-i18n="project7.live">Live Geodata Tracker</span>
+            </span>
+
+          </button>
+          <div class="project__body">
+            <h3 data-i18n="project7.title">Echtzeit-Heißluftballon-Tracking &amp; 3D-Flugpfadanalyse</h3>
+            <p class="project__text" data-i18n="project7.text">Automatisierter Hintergrunddienst zur kontinuierlichen Erfassung von Heißluftballonen mit interaktiver 2D/3D-Höhenprofil- und Flugpfadvisualisierung.</p>
+            <ul class="badges">
+              <li class="badge" data-i18n="project7.tag1">Python</li>
+              <li class="badge" data-i18n="project7.tag2">FlightRadar24 API</li>
+              <li class="badge" data-i18n="project7.tag3">CesiumJS</li>
+              <li class="badge" data-i18n="project7.tag4">Leaflet</li>
+              <li class="badge" data-i18n="project7.tag5">GeoJSON</li>
+              <li class="badge" data-i18n="project7.tag6">GitHub Actions</li>
+            </ul>
+            <p class="project__note" data-i18n="project7.institution">Eigenprojekt · Open Data &amp; GIS</p>
+            <p class="project__links">
+              <a class="btn btn--primary" href="/hot-air-balloon-tracking/" target="_blank" rel="noopener noreferrer" data-i18n="project7.demo">Live-Demo ansehen</a>
+              <a href="https://github.com/MauriceBa/computational-portfolio/tree/main/hot-air-balloon-tracking" target="_blank" rel="noopener noreferrer" data-i18n="project7.repo">Quellcode ansehen</a>
+            </p>
+          </div>
+        </article>
         <article class="card project">
           <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
 
@@ -337,62 +396,6 @@ document.documentElement.classList.add("js");
               <li class="badge" data-i18n="project5.tag4">Fahrzeugdynamik</li>
             </ul>
             <p class="project__note" data-i18n="project5.institution">RWTH Aachen University</p>
-          </div>
-        </article>
-
-        <article class="card project project--featured">
-          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
-
-            <img class="project__media" src="assets/img/Slopes_Aerial.jpg" alt="" loading="lazy" width="943" height="530">
-            <span class="project__live">
-              <span class="project__live-dot" aria-hidden="true"></span>
-              <span data-i18n="project6.live">Interaktive WebGL-Demo</span>
-            </span>
-
-          </button>
-          <div class="project__body">
-            <h3 data-i18n="project6.title">Interaktive 3D-Visualisierung von Skitouren und Pistenhistorie</h3>
-            <p class="project__text" data-i18n="project6.text">Browserbasierte 3D-Geländedarstellung und GPS-Track-Analyse mit WebGL und Three.js.</p>
-            <ul class="badges">
-              <li class="badge" data-i18n="project6.tag1">Three.js</li>
-              <li class="badge" data-i18n="project6.tag2">JavaScript</li>
-              <li class="badge" data-i18n="project6.tag3">WebGL</li>
-              <li class="badge" data-i18n="project6.tag4">GPS/GeoJSON</li>
-            </ul>
-            <p class="project__note" data-i18n="project6.institution">Eigenprojekt</p>
-            <p class="project__links">
-              <a class="btn btn--primary" href="/slopes/" target="_blank" rel="noopener noreferrer" data-i18n="project6.demo">Live-Demo ansehen</a>
-              <a href="https://github.com/MauriceBa/computational-portfolio/tree/main/slopes" target="_blank" rel="noopener noreferrer" data-i18n="project6.repo">Quellcode ansehen</a>
-            </p>
-          </div>
-        </article>
-
-        <article class="card project project--featured">
-          <button class="project__zoom" type="button" data-i18n="project.zoom" data-i18n-attr="aria-label" aria-label="Bild vergrößern">
-
-            <img class="project__media" src="assets/img/Balloon_Track.svg" alt="" loading="lazy" width="943" height="530">
-            <span class="project__live">
-              <span class="project__live-dot" aria-hidden="true"></span>
-              <span data-i18n="project7.live">Live Geodata Tracker</span>
-            </span>
-
-          </button>
-          <div class="project__body">
-            <h3 data-i18n="project7.title">Echtzeit-Heißluftballon-Tracking &amp; 3D-Flugpfadanalyse</h3>
-            <p class="project__text" data-i18n="project7.text">Automatisierter Hintergrunddienst zur kontinuierlichen Erfassung von Heißluftballonen mit interaktiver 2D/3D-Höhenprofil- und Flugpfadvisualisierung.</p>
-            <ul class="badges">
-              <li class="badge" data-i18n="project7.tag1">Python</li>
-              <li class="badge" data-i18n="project7.tag2">FlightRadar24 API</li>
-              <li class="badge" data-i18n="project7.tag3">CesiumJS</li>
-              <li class="badge" data-i18n="project7.tag4">Leaflet</li>
-              <li class="badge" data-i18n="project7.tag5">GeoJSON</li>
-              <li class="badge" data-i18n="project7.tag6">GitHub Actions</li>
-            </ul>
-            <p class="project__note" data-i18n="project7.institution">Eigenprojekt · Open Data &amp; GIS</p>
-            <p class="project__links">
-              <a class="btn btn--primary" href="/hot-air-balloon-tracking/" target="_blank" rel="noopener noreferrer" data-i18n="project7.demo">Live-Demo ansehen</a>
-              <a href="https://github.com/MauriceBa/computational-portfolio/tree/main/hot-air-balloon-tracking" target="_blank" rel="noopener noreferrer" data-i18n="project7.repo">Quellcode ansehen</a>
-            </p>
           </div>
         </article>
 

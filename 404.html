@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seite nicht gefunden — Maurice Bastard</title>
+<meta name="description" content="Die aufgerufene Seite existiert nicht. Zurück zum Portfolio von Maurice Bastard.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://mauricebastard.de/404.html">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>
+/* Same pre-paint theme resolution as the other pages. main.js is deferred. */
+(function () {
+  var stored = null;
+  try { stored = window.localStorage.getItem("portfolio-theme"); } catch (e) { stored = null; }
+  var value = typeof stored === "string" ? stored.trim().toLowerCase() : "";
+  var prefersDark = false;
+  try { prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; } catch (e) { prefersDark = false; }
+  document.documentElement.dataset.theme =
+    value === "dark" ? "dark" : value === "light" ? "light" : prefersDark ? "dark" : "light";
+})();
+</script>
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+<header id="site-header" class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__brand" href="index.html">
+      <span aria-hidden="true">◈</span>
+      <span>Maurice Bastard</span>
+    </a>
+
+    <div class="site-header__controls">
+      <button id="theme-toggle" class="theme-toggle" type="button"
+              aria-pressed="false" aria-label="Zum dunklen Modus wechseln">
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 4.9l-1.8 1.8M4.9 19.1l1.8-1.8M17.3 19.1l-1.8-1.8"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="main" tabindex="-1">
+  <section class="section" aria-labelledby="notfound-heading">
+    <div class="container">
+      <h1 id="notfound-heading">Seite nicht gefunden</h1>
+      <p>Die aufgerufene Adresse existiert nicht oder wurde verschoben.</p>
+      <p class="entry__actions">
+        <a class="btn btn--primary" href="index.html">Zur Startseite</a>
+        <a class="btn btn--ghost" href="index.html#projects">Zu den Projekten</a>
+        <a class="btn btn--quiet" href="index.html#contact">Kontakt</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="site-footer__copy">© 2026 Maurice Bastard</p>
+    <nav class="site-footer__nav" aria-label="Rechtliches">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutzerklärung</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
