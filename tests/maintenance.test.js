@@ -27,7 +27,7 @@ const RUNTIME_ONLY_KEYS = new Set([
   "theme.toDark",
   "theme.toLight",
   "contact.status",
-  "contact.pending",
+  "contact.sending",
   "contact.success",
   "contact.error"
 ]);
@@ -115,6 +115,17 @@ test("main.js only talks to the Web3Forms endpoint", () => {
   for (const url of urls) {
     assert.equal(url, "https://api.web3forms.com/submit", `unexpected fetch target: ${url}`);
   }
+});
+
+test("the contact submit handler can always recover", () => {
+  // The button is disabled before fetch and must come back on every path:
+  // success, API rejection, network failure and timeout. A handler that only
+  // resets on success leaves a dead submit button behind.
+  const src = read("assets/js/main.js");
+  assert.match(src, /AbortController/, "the submit request has no timeout");
+  assert.match(src, /clearTimeout\(timer\)/, "the timeout is never cleared");
+  assert.match(src, /finish\(false\)/, "no success path");
+  assert.match(src, /finish\(true\)/, "no error path");
 });
 
 test("every external link is safe against reverse tabnabbing", () => {

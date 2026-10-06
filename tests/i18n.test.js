@@ -28,7 +28,7 @@ test("no runtime or chrome string carries placeholder brackets", () => {
     "theme.toDark", "theme.toLight", "lang.label",
     "contact.github", "contact.linkedin",
     "contact.status", "contact.email",
-    "contact.pending", "contact.success", "contact.error"
+    "contact.sending", "contact.success", "contact.error"
   ]);
 
   for (const lang of ["en", "fr"]) {
@@ -107,7 +107,7 @@ test("an empty dictionary writes nothing at all", () => {
 const RUNTIME_STRINGS = [
   "nav.close", "nav.menu", "theme.toDark",
   "theme.toLight", "contact.status",
-  "contact.pending", "contact.success", "contact.error"
+  "contact.sending", "contact.success", "contact.error"
 ];
 
 test("runtime UI strings are not wrapped in placeholder brackets", () => {

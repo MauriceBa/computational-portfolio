@@ -395,12 +395,19 @@
           }
 
           var d = dict();
+          var original = submitBtn ? submitBtn.textContent : "";
+
           if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.textContent = d["contact.pending"] || "Sende...";
+            submitBtn.textContent = d["contact.sending"] || "Sende...";
           }
+          if (contactStatus) contactStatus.textContent = "";
+
+          var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+          var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 10000) : null;
 
           function finish(error) {
+            if (timer) clearTimeout(timer);
             if (contactStatus) {
               contactStatus.textContent = error
                 ? (d["contact.error"] || "Fehler beim Senden. Bitte versuchen Sie es erneut oder schreiben Sie direkt an contact@mauricebastard.de.")
@@ -408,21 +415,34 @@
             }
             if (submitBtn) {
               submitBtn.disabled = false;
-              submitBtn.textContent = d["contact.submit"] || submitBtn.textContent;
+              submitBtn.textContent = original || d["contact.submit"];
             }
           }
 
-          fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(form) })
-            .then(function (res) { return res.json(); })
-            .then(function (data) {
-              if (data && data.success) {
-                form.reset();
-                finish(false);
-              } else {
-                finish(true);
-              }
+          fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { Accept: "application/json" },
+            body: new FormData(form),
+            signal: ctrl ? ctrl.signal : undefined
+          })
+            .then(function (res) {
+              return res.json()
+                .catch(function () { return {}; })
+                .then(function (data) {
+                  if (res.ok && data.success) {
+                    form.reset();
+                    finish(false);
+                  } else {
+                    finish(true);
+                  }
+                });
             })
-            .catch(function () { finish(true); });
+            .catch(function (err) {
+              if (typeof console !== "undefined" && console.warn) {
+                console.warn("Contact form failed:", err);
+              }
+              finish(true);
+            });
         });
       }
 
