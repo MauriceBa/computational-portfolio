@@ -449804,5 +449804,33 @@
     "distance_km": 504.8,
     "timestamp": "2026-10-06T07:03:01.675266+00:00",
     "date": "2026-10-06"
+  },
+  {
+    "id": "41ffa692",
+    "callsign": "HBBBB",
+    "registration": "HB-BBB",
+    "lat": 47.113,
+    "lon": 7.592,
+    "altitude": 3125,
+    "altitude_m": 952,
+    "ground_speed": 7,
+    "aircraft_code": "BALL",
+    "distance_km": 421.1,
+    "timestamp": "2026-10-06T14:18:59.268793+00:00",
+    "date": "2026-10-06"
+  },
+  {
+    "id": "41ffaa65",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 51.477,
+    "lon": 7.86,
+    "altitude": 1000,
+    "altitude_m": 305,
+    "ground_speed": 93,
+    "aircraft_code": "R44",
+    "distance_km": 146.0,
+    "timestamp": "2026-10-06T14:18:59.268793+00:00",
+    "date": "2026-10-06"
   }
 ]
