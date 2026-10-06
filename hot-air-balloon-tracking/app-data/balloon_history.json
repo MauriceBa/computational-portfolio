@@ -449762,5 +449762,47 @@
     "distance_km": 505.0,
     "timestamp": "2026-10-05T18:23:50.352754+00:00",
     "date": "2026-10-05"
+  },
+  {
+    "id": "41fe5924",
+    "callsign": "DOLLA",
+    "registration": "D-OLLA",
+    "lat": 47.788,
+    "lon": 11.588,
+    "altitude": 6725,
+    "altitude_m": 2050,
+    "ground_speed": 4,
+    "aircraft_code": "BALL",
+    "distance_km": 518.1,
+    "timestamp": "2026-10-06T07:03:01.675266+00:00",
+    "date": "2026-10-06"
+  },
+  {
+    "id": "41fe5daf",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 50.768,
+    "lon": 7.162,
+    "altitude": 0,
+    "altitude_m": 0,
+    "ground_speed": 1,
+    "aircraft_code": "R44",
+    "distance_km": 75.0,
+    "timestamp": "2026-10-06T07:03:01.675266+00:00",
+    "date": "2026-10-06"
+  },
+  {
+    "id": "41fe425f",
+    "callsign": "BALAI2",
+    "registration": "N/A",
+    "lat": 46.231,
+    "lon": 6.104,
+    "altitude": 0,
+    "altitude_m": 0,
+    "ground_speed": 0,
+    "aircraft_code": "GRND",
+    "distance_km": 504.8,
+    "timestamp": "2026-10-06T07:03:01.675266+00:00",
+    "date": "2026-10-06"
   }
 ]
