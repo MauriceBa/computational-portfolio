@@ -417,8 +417,7 @@ document.documentElement.classList.add("js");
 
       <div class="contact">
         <div class="contact__aside">
-          <!-- ponytail: contact temporarily disabled (mailto broken), flip class/attr to re-enable -->
-          <a id="contact-mailto" class="btn btn--primary is-disabled" aria-disabled="true"
+          <a id="contact-mailto" class="btn btn--primary"
              href="mailto:contact@mauricebastard.de" data-i18n="contact.emailBtn">E-Mail schreiben</a>
           <p class="contact__social">
             <a href="https://github.com/MauriceBa" target="_blank" rel="noopener noreferrer" data-i18n="contact.github">GitHub</a>
@@ -427,9 +426,14 @@ document.documentElement.classList.add("js");
         </div>
 
         <form id="contact-form" class="contact__form" novalidate>
+          <input type="hidden" name="access_key" value="630f01b9-f196-4670-8712-ff4f5dce6d4e">
           <div class="field">
             <label for="contact-name" data-i18n="contact.name">Ihr Name</label>
             <input id="contact-name" name="name" type="text" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="contact-email" data-i18n="contact.email">Ihre E-Mail-Adresse</label>
+            <input id="contact-email" name="email" type="email" required autocomplete="email">
           </div>
           <div class="field">
             <label for="contact-subject" data-i18n="contact.subject">Betreff</label>
@@ -439,7 +443,8 @@ document.documentElement.classList.add("js");
             <label for="contact-message" data-i18n="contact.message">Ihre Nachricht</label>
             <textarea id="contact-message" name="message" rows="5" required></textarea>
           </div>
-          <button class="btn btn--primary" type="submit" disabled data-i18n="contact.submit">Nachricht per E-Mail vorbereiten</button>
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          <button class="btn btn--primary" type="submit" id="contact-submit" data-i18n="contact.submit">Nachricht senden</button>
           <p id="contact-status" class="visually-hidden" aria-live="polite"></p>
         </form>
       </div>

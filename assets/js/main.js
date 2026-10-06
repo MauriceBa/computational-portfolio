@@ -383,6 +383,7 @@
       var contactStatus = doc.getElementById("contact-status");
 
       if (form) {
+        var submitBtn = doc.getElementById("contact-submit");
         form.addEventListener("submit", function (event) {
           event.preventDefault();
 
@@ -393,15 +394,35 @@
             return;
           }
 
-          var name = (form.elements.name && form.elements.name.value) || "";
-          var subject = (form.elements.subject && form.elements.subject.value) || "";
-          var message = (form.elements.message && form.elements.message.value) || "";
-          var body = [name, subject, "", message].join("\n");
+          var d = dict();
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = d["contact.pending"] || "Sende...";
+          }
 
-          window.location.href = buildMailtoUrl("contact@mauricebastard.de", {
-            subject: subject,
-            body: body
-          });
+          function finish(error) {
+            if (contactStatus) {
+              contactStatus.textContent = error
+                ? (d["contact.error"] || "Fehler beim Senden. Bitte versuchen Sie es erneut oder schreiben Sie direkt an contact@mauricebastard.de.")
+                : (d["contact.success"] || "Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.");
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = d["contact.submit"] || submitBtn.textContent;
+            }
+          }
+
+          fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(form) })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              if (data && data.success) {
+                form.reset();
+                finish(false);
+              } else {
+                finish(true);
+              }
+            })
+            .catch(function () { finish(true); });
         });
       }
 

@@ -243,9 +243,7 @@ a:hover {
   background: color-mix(in srgb, var(--color-accent) 85%, black);
 }
 
-/* ponytail: temporarily disabled contact buttons (mailto broken);
-   drop .is-disabled / the disabled attribute to restore */
-.btn.is-disabled,
+/* Pending state while the contact form submits. */
 .btn:disabled {
   opacity: 0.45;
   filter: grayscale(1);

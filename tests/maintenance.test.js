@@ -26,7 +26,10 @@ const RUNTIME_ONLY_KEYS = new Set([
   "nav.menu",
   "theme.toDark",
   "theme.toLight",
-  "contact.status"
+  "contact.status",
+  "contact.pending",
+  "contact.success",
+  "contact.error"
 ]);
 
 test("every data-i18n key used in index.html exists in both dictionaries", () => {
@@ -96,10 +99,17 @@ test("no script or stylesheet is loaded from an external origin", () => {
   }
 });
 
-test("main.js fetches nothing over the network", () => {
+test("main.js only talks to the Web3Forms endpoint", () => {
+  // Contact submission via fetch is the one allowed network call; anything
+  // else (and any other endpoint) in the zero-dependency bundle is a surprise.
   const src = read("assets/js/main.js");
-  for (const forbidden of ["fetch(", "XMLHttpRequest", "navigator.sendBeacon", "EventSource"]) {
+  for (const forbidden of ["XMLHttpRequest", "navigator.sendBeacon", "EventSource"]) {
     assert.equal(src.includes(forbidden), false, `main.js must not use ${forbidden}`);
+  }
+  const urls = [...src.matchAll(/fetch\(\s*["']([^"']+)["']/g)].map((m) => m[1]);
+  assert.ok(urls.length >= 1, "the contact form no longer submits anywhere");
+  for (const url of urls) {
+    assert.equal(url, "https://api.web3forms.com/submit", `unexpected fetch target: ${url}`);
   }
 });
 
