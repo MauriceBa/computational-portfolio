@@ -93,7 +93,11 @@ test("no script or stylesheet is loaded from an external origin", () => {
     const src = read(file);
     const remote = [
       ...matchAll(src, /<script[^>]*src="(https?:\/\/[^"]+)"/g),
-      ...matchAll(src, /<link[^>]*href="(https?:\/\/[^"]+)"/g)
+      // rel=canonical must be an absolute URL -- only actual assets are constrained.
+      ...[...src.matchAll(/<link[^>]*href="(https?:\/\/[^"]+)"/g)]
+        .map((m) => m[0])
+        .filter((tag) => !/rel="canonical"/.test(tag))
+        .map((tag) => tag.match(/href="(https?:\/\/[^"]+)"/)[1])
     ];
     assert.deepEqual(remote, [], `${file} loads remote assets: ${remote.join(", ")}`);
   }

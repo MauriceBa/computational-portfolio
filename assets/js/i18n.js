@@ -168,7 +168,7 @@ const I18N = {
   "contact.github": "GitHub",
   "contact.linkedin": "LinkedIn",
 
-    "footer.copyright": "© 2027 Maurice Bastard",
+    "footer.copyright": "© 2026 Maurice Bastard",
     "footer.imprint": "Imprint",
     "footer.privacy": "Privacy policy"
   },
@@ -329,7 +329,7 @@ const I18N = {
   "contact.github": "GitHub",
   "contact.linkedin": "LinkedIn",
 
-    "footer.copyright": "© 2027 Maurice Bastard",
+    "footer.copyright": "© 2026 Maurice Bastard",
     "footer.imprint": "Mentions légales",
     "footer.privacy": "Politique de confidentialité"
   }
