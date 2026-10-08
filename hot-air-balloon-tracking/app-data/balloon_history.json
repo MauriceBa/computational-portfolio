@@ -449874,5 +449874,19 @@
     "distance_km": 982.6,
     "timestamp": "2026-10-07T17:07:52.768432+00:00",
     "date": "2026-10-07"
+  },
+  {
+    "id": "4207099b",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 50.772,
+    "lon": 7.161,
+    "altitude": 225,
+    "altitude_m": 69,
+    "ground_speed": 1,
+    "aircraft_code": "R44",
+    "distance_km": 74.9,
+    "timestamp": "2026-10-08T09:14:43.139528+00:00",
+    "date": "2026-10-08"
   }
 ]
