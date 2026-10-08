@@ -966,6 +966,44 @@ a:hover {
   font-style: italic;
 }
 
+/* -- reactor band --
+ *
+ * The airlift loop reactor animation that sits between the project grid and
+ * the research section, doubling as the graphical abstract of the paper.
+ */
+
+.reactor-band__grid {
+  display: grid;
+  grid-template-columns: minmax(15rem, 21.25rem) minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.reactor-band__stage {
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--color-bg);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+.reactor-band__stage canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 640 / 700;
+}
+
+.reactor-band__copy p {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-lg);
+  line-height: 1.7;
+}
+
+.reactor-band__copy p:last-child {
+  margin-bottom: 0;
+}
+
 /* -- contact -- */
 
 .contact__lead {
@@ -1092,6 +1130,17 @@ a:hover {
 
   .entries {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stack the reactor band: the animation keeps its portrait format and
+   * centres itself above the copy. */
+  .reactor-band__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reactor-band__stage {
+    max-width: 24rem;
+    margin-inline: auto;
   }
 
   .about,

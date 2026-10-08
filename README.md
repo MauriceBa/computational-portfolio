@@ -300,6 +300,7 @@ datenschutz.html        placeholder privacy policy (German only)
 assets/css/style.css    design tokens, layout, components, responsive rules
 assets/js/i18n.js       EN and FR dictionaries
 assets/js/main.js       pure logic + all DOM wiring
+assets/js/reactor.js    the airlift loop reactor band animation (own deferred file)
 assets/img/             six project images, favicon.svg, og-image.png
 assets/pdf/             your CV, one file per language (CV_DE/EN/FR_Maurice_Bastard.pdf)
 slopes/                 the 3D ski-tour demo (own i18n; `ion-token.js` is gitignored)
@@ -354,6 +355,7 @@ and nothing to license.
 | Card glow | `.card` | pointer-tracked gradient on a pseudo-element stacked below the card's content, so text is never tinted; without JS the gradient stays parked off card |
 | Image lightbox | `.project__zoom` → `#lightbox` | every project image is a button; the dialog closes on Escape, backdrop or its own button, keeps Tab inside itself, locks page scroll, and returns focus to the card |
 | Featured card | `.project--featured` | the ski visualiser spans the full grid row, carries the live badge and a primary-styled demo button |
+| Reactor band | `#reactor-band` / `#reactor` | airlift loop reactor canvas between the projects and the research section, graphical abstract of the paper: bubbles rise through the riser, particles ride the circulation back down; paused while off screen or the tab is hidden, one still frame under `prefers-reduced-motion`, palette follows the theme, lives in its own deferred file so `main.js` keeps its budget |
 
 ### Browser storage
 

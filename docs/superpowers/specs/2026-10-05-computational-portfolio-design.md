@@ -400,6 +400,7 @@ That is correct behaviour, not a gap.
 | `style.css` | ≤ 20 KB |
 | `main.js` + `i18n.js`, **gzipped** | ≤ 10 KB |
 | `main.js` + `i18n.js`, raw | ≤ 36 KB (reported, not enforced) |
+| `reactor.js`, **gzipped** | ≤ 6 KB (own deferred file for the reactor band) |
 | Each SVG | ≤ 5 KB |
 | CV PDFs | ≤ 400 KB each (download, never part of page load) |
 | Third-party requests | 0 |

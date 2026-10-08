@@ -60,6 +60,7 @@ document.documentElement.classList.add("js");
 </script>
 <script src="assets/js/i18n.js" defer></script>
 <script src="assets/js/main.js" defer></script>
+<script src="assets/js/reactor.js" defer></script>
 </head>
 <body>
 
@@ -399,6 +400,31 @@ document.documentElement.classList.add("js");
           </div>
         </article>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== AIRLIFT-REAKTOR =========================== -->
+  <section id="reactor-band" class="section section--alt" aria-labelledby="reactor-band-heading">
+    <div class="container">
+      <h2 id="reactor-band-heading" class="section__title" data-i18n="reactor.heading">Airlift-Zirkulation im Schlaufenreaktor</h2>
+
+      <div class="reactor-band__grid">
+        <figure class="reactor-band__stage">
+          <canvas id="reactor" role="img" data-i18n="reactor.canvasLabel"
+                  data-i18n-attr="aria-label"
+                  aria-label="Animation eines Schlaufenreaktors: Luftblasen steigen im Riser auf, Partikel zirkulieren über den Downcomer zurück nach unten."></canvas>
+        </figure>
+        <div class="reactor-band__copy">
+          <p data-i18n="reactor.text">Der Sparger am Fuß des Risers dosiert die Gasphase. Die aufsteigende
+             Blasensäule reißt die Flüssigkeit mit, im Downcomer fließt sie zurück — diese
+             Zirkulation bestimmt Mischung und Stoffübergang. Das stabile Betriebsfenster
+             des Pilotreaktors habe ich experimentell und mit CFD charakterisiert.</p>
+          <p>
+            <a class="btn btn--quiet" href="https://doi.org/10.1016/j.cherd.2026.06.054"
+               target="_blank" rel="noopener noreferrer" data-i18n="research.1.doi">Veröffentlichung ansehen (DOI)</a>
+          </p>
+        </div>
       </div>
     </div>
   </section>

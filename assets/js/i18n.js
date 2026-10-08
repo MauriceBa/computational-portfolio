@@ -154,6 +154,10 @@ const I18N = {
     "research.2.abstract": "Development of an automated optimization chain for packed bed geometries, reducing pressure drop while increasing reactivity. Master's thesis, completed as part of a joint research project.",
     "research.2.confidential": "Not published, as the work was carried out at Forschungszentrum Jülich.",
 
+    "reactor.heading": "Airlift circulation in the loop reactor",
+    "reactor.text": "The sparger at the foot of the riser meters the gas phase. The rising bubble column drags the liquid along; in the downcomer it flows back — this circulation governs mixing and mass transfer. I characterized the stable operating window of the pilot reactor experimentally and with CFD.",
+    "reactor.canvasLabel": "Loop reactor animation: air bubbles rise in the riser while particles circulate back down through the downcomer.",
+
     "contact.heading": "Contact",
     "contact.lead": "The easiest way to reach me is email.",
     "contact.emailBtn": "Send an email",
@@ -315,6 +319,10 @@ const I18N = {
     "research.2.meta": "RWTH Aachen University & Forschungszentrum Jülich · 2026",
     "research.2.abstract": "Développement d'une chaîne d'optimisation automatisée pour les géométries de lits fixes, réduisant la perte de charge tout en augmentant la réactivité. Mémoire de master, réalisée dans le cadre d'un projet de recherche conjoint.",
     "research.2.confidential": "Non publié, le travail ayant été réalisé au Forschungszentrum Jülich.",
+
+    "reactor.heading": "Circulation airlift dans le réacteur à boucle",
+    "reactor.text": "Le sparger au pied du riser dose la phase gazeuse. La colonne de bulles entraîne le liquide ; dans le downcomer, il redescend — cette circulation gouverne le mélange et le transfert de matière. J'ai caractérisé la fenêtre de fonctionnement stable du réacteur pilote, expérimentalement et par CFD.",
+    "reactor.canvasLabel": "Animation d'un réacteur à boucle : les bulles d'air montent dans le riser pendant que les particules redescendent par le downcomer.",
 
     "contact.heading": "Contact",
     "contact.lead": "Le moyen le plus simple de me joindre est le courriel.",
