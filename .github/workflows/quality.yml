@@ -34,4 +34,15 @@ jobs:
             if (bad.length) { console.error("below 90:", bad); process.exit(1); }
           '
 
-          npx --yes @axe-core/cli http://localhost:8080 --exit
+          # axe ships the ChromeDriver of its own release date, which can run
+          # ahead of the Chrome installed in the runner image ("session not
+          # created"). Fetch the driver that matches the installed browser
+          # and hand it to axe explicitly.
+          CHROME_VER="$(google-chrome --product-version)"
+          curl -fsSLo /tmp/chromedriver.zip \
+            "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chromedriver-linux64.zip"
+          unzip -q /tmp/chromedriver.zip -d /tmp/chromedriver
+          chmod +x /tmp/chromedriver/chromedriver-linux64/chromedriver
+
+          npx --yes @axe-core/cli http://localhost:8080 --exit \
+            --chromedriver-path /tmp/chromedriver/chromedriver-linux64/chromedriver
