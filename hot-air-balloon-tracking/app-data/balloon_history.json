@@ -449902,5 +449902,19 @@
     "distance_km": 141.6,
     "timestamp": "2026-10-09T08:14:21.626384+00:00",
     "date": "2026-10-09"
+  },
+  {
+    "id": "42122ab0",
+    "callsign": "HBQTG",
+    "registration": "N/A",
+    "lat": 47.044,
+    "lon": 7.276,
+    "altitude": 3725,
+    "altitude_m": 1135,
+    "ground_speed": 6,
+    "aircraft_code": "BALL",
+    "distance_km": 423.2,
+    "timestamp": "2026-10-11T06:05:21.941355+00:00",
+    "date": "2026-10-11"
   }
 ]
