@@ -159,8 +159,6 @@ const I18N = {
     "reactor.canvasLabel": "Loop reactor animation: air bubbles rise in the riser while particles circulate back down through the downcomer.",
 
     "contact.heading": "Contact",
-    "contact.lead": "The easiest way to reach me is email.",
-    "contact.emailBtn": "Send an email",
   "contact.name": "Your name",
   "contact.email": "Your email address",
   "contact.subject": "Subject",
@@ -325,8 +323,6 @@ const I18N = {
     "reactor.canvasLabel": "Animation d'un réacteur à boucle : les bulles d'air montent dans le riser pendant que les particules redescendent par le downcomer.",
 
     "contact.heading": "Contact",
-    "contact.lead": "Le moyen le plus simple de me joindre est le courriel.",
-    "contact.emailBtn": "Envoyer un courriel",
   "contact.name": "Votre nom",
   "contact.email": "Votre adresse e-mail",
   "contact.subject": "Objet",

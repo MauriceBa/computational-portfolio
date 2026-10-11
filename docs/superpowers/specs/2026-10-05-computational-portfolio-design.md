@@ -265,8 +265,6 @@ Download buttons point at `assets/pdf/` placeholder PDFs. Abstract clamping uses
 | Element | Placeholder | i18n key |
 | --- | --- | --- |
 | Heading | `[Kontakt]` | `contact.heading` |
-| Lead | `[Am einfachsten erreichbar ich per E-Mail.]` | `contact.lead` |
-| Mailto button | `[E-Mail schreiben]` | `contact.emailBtn` |
 | Form name / subject / message | `[Dein Name]`, `[Betreff]`, `[Deine Nachricht]` | `contact.name`, `contact.subject`, `contact.message` |
 | Submit | `[Nachricht per E-Mail vorbereiten]` | `contact.submit` |
 | GitHub / LinkedIn | `[GitHub]`, `[LinkedIn]` | `contact.github`, `contact.linkedin` |

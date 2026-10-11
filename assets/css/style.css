@@ -1006,11 +1006,6 @@ a:hover {
 
 /* -- contact -- */
 
-.contact__lead {
-  max-width: 50ch;
-  color: var(--color-muted);
-}
-
 .contact {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);

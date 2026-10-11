@@ -167,8 +167,8 @@ Select-String -Path *.html, assets/js/main.js -Pattern "contact@mauricebastard.d
 
 | Location | What it is |
 | --- | --- |
-| `index.html` → `#contact-mailto` `href` | the mailto button |
-| `assets/js/main.js` → the submit handler | the form's mailto target |
+| `index.html` → hero | the hero mail link |
+| `assets/js/main.js` → submit handler error text | where a failed form submission points |
 | `impressum.html` | the contact block |
 | `datenschutz.html` → controller block | the controller address |
 | `datenschutz.html` → rights block | where data-subject requests go |
