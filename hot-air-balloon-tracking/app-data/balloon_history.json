@@ -449916,5 +449916,19 @@
     "distance_km": 423.2,
     "timestamp": "2026-10-11T06:05:21.941355+00:00",
     "date": "2026-10-11"
+  },
+  {
+    "id": "4212bf54",
+    "callsign": "GXBAL",
+    "registration": "G-XBAL",
+    "lat": 51.733,
+    "lon": -0.36,
+    "altitude": 1600,
+    "altitude_m": 488,
+    "ground_speed": 64,
+    "aircraft_code": "NNJA",
+    "distance_km": 461.7,
+    "timestamp": "2026-10-11T13:11:51.255709+00:00",
+    "date": "2026-10-11"
   }
 ]
