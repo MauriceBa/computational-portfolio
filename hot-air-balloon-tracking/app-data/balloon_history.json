@@ -449944,5 +449944,33 @@
     "distance_km": 74.9,
     "timestamp": "2026-10-12T07:45:39.584048+00:00",
     "date": "2026-10-12"
+  },
+  {
+    "id": "42195fea",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 48.415,
+    "lon": 11.6577,
+    "altitude": 1675,
+    "altitude_m": 511,
+    "ground_speed": 92,
+    "aircraft_code": "R44",
+    "distance_km": 478.7,
+    "timestamp": "2026-10-13T12:23:10.618680+00:00",
+    "date": "2026-10-13"
+  },
+  {
+    "id": "42198181",
+    "callsign": "SPBWE",
+    "registration": "SP-BWE",
+    "lat": 50.0459,
+    "lon": 19.9362,
+    "altitude": 1201,
+    "altitude_m": 366,
+    "ground_speed": 1,
+    "aircraft_code": "BALL",
+    "distance_km": 982.7,
+    "timestamp": "2026-10-13T12:23:10.618680+00:00",
+    "date": "2026-10-13"
   }
 ]
