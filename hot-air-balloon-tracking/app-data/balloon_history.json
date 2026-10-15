@@ -450000,5 +450000,33 @@
     "distance_km": 394.5,
     "timestamp": "2026-10-14T07:51:38.026126+00:00",
     "date": "2026-10-14"
+  },
+  {
+    "id": "42216ad1",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 48.848,
+    "lon": 13.353,
+    "altitude": 1700,
+    "altitude_m": 518,
+    "ground_speed": 82,
+    "aircraft_code": "R44",
+    "distance_km": 562.6,
+    "timestamp": "2026-10-15T09:35:13.693550+00:00",
+    "date": "2026-10-15"
+  },
+  {
+    "id": "42214c61",
+    "callsign": "PHGRK",
+    "registration": "PH-GRK",
+    "lat": 52.031,
+    "lon": 5.343,
+    "altitude": 850,
+    "altitude_m": 259,
+    "ground_speed": 20,
+    "aircraft_code": "BALL",
+    "distance_km": 149.6,
+    "timestamp": "2026-10-15T09:35:13.693550+00:00",
+    "date": "2026-10-15"
   }
 ]
