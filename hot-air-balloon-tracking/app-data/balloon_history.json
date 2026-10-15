@@ -450028,5 +450028,61 @@
     "distance_km": 149.6,
     "timestamp": "2026-10-15T09:35:13.693550+00:00",
     "date": "2026-10-15"
+  },
+  {
+    "id": "42226e98",
+    "callsign": "HBQDW",
+    "registration": "HB-QDW",
+    "lat": 47.547,
+    "lon": 8.873,
+    "altitude": 4950,
+    "altitude_m": 1509,
+    "ground_speed": 10,
+    "aircraft_code": "BALL",
+    "distance_km": 411.3,
+    "timestamp": "2026-10-15T14:34:42.979716+00:00",
+    "date": "2026-10-15"
+  },
+  {
+    "id": "4222947f",
+    "callsign": "HBQYQ",
+    "registration": "HB-QYQ",
+    "lat": 47.43,
+    "lon": 7.797,
+    "altitude": 3850,
+    "altitude_m": 1173,
+    "ground_speed": 20,
+    "aircraft_code": "BALL",
+    "distance_km": 391.5,
+    "timestamp": "2026-10-15T14:34:42.979716+00:00",
+    "date": "2026-10-15"
+  },
+  {
+    "id": "42228ab5",
+    "callsign": "HBBAW",
+    "registration": "N/A",
+    "lat": 47.508,
+    "lon": 9.029,
+    "altitude": 2850,
+    "altitude_m": 869,
+    "ground_speed": 190,
+    "aircraft_code": "BALL",
+    "distance_km": 420.8,
+    "timestamp": "2026-10-15T14:34:42.979716+00:00",
+    "date": "2026-10-15"
+  },
+  {
+    "id": "422276a3",
+    "callsign": "DHBAL",
+    "registration": "D-HBAL",
+    "lat": 48.144,
+    "lon": 10.71,
+    "altitude": 2450,
+    "altitude_m": 747,
+    "ground_speed": 94,
+    "aircraft_code": "R44",
+    "distance_km": 443.2,
+    "timestamp": "2026-10-15T14:34:42.979716+00:00",
+    "date": "2026-10-15"
   }
 ]
