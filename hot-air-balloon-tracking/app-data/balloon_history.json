@@ -450602,5 +450602,61 @@
     "distance_km": 456.5,
     "timestamp": "2026-10-16T08:38:37.532017+00:00",
     "date": "2026-10-16"
+  },
+  {
+    "id": "422522b1",
+    "callsign": "HBQZY",
+    "registration": "HB-QZY",
+    "lat": 47.5622,
+    "lon": 9.066,
+    "altitude": 6050,
+    "altitude_m": 1844,
+    "ground_speed": 6,
+    "aircraft_code": "BALL",
+    "distance_km": 416.9,
+    "timestamp": "2026-10-16T13:39:30.514083+00:00",
+    "date": "2026-10-16"
+  },
+  {
+    "id": "42265133",
+    "callsign": "HBBRM",
+    "registration": "HB-BRM",
+    "lat": 47.508,
+    "lon": 9.359,
+    "altitude": 7350,
+    "altitude_m": 2240,
+    "ground_speed": 140,
+    "aircraft_code": "BALL",
+    "distance_km": 433.4,
+    "timestamp": "2026-10-16T13:39:30.514083+00:00",
+    "date": "2026-10-16"
+  },
+  {
+    "id": "422619a2",
+    "callsign": "HBQZG",
+    "registration": "HB-QZG",
+    "lat": 47.258,
+    "lon": 8.288,
+    "altitude": 6950,
+    "altitude_m": 2118,
+    "ground_speed": 6,
+    "aircraft_code": "BALL",
+    "distance_km": 422.0,
+    "timestamp": "2026-10-16T13:39:30.514083+00:00",
+    "date": "2026-10-16"
+  },
+  {
+    "id": "4226666e",
+    "callsign": "DOMMT",
+    "registration": "D-OMMT",
+    "lat": 47.967,
+    "lon": 12.529,
+    "altitude": 5900,
+    "altitude_m": 1798,
+    "ground_speed": 10,
+    "aircraft_code": "BALL",
+    "distance_km": 560.2,
+    "timestamp": "2026-10-16T13:39:30.514083+00:00",
+    "date": "2026-10-16"
   }
 ]
