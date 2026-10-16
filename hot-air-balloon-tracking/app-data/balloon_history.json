@@ -450588,5 +450588,19 @@
     "distance_km": 809.9,
     "timestamp": "2026-10-16T03:47:14.119790+00:00",
     "date": "2026-10-16"
+  },
+  {
+    "id": "4225556c",
+    "callsign": "HBQZL",
+    "registration": "HB-QZL",
+    "lat": 47.351,
+    "lon": 9.566,
+    "altitude": 2725,
+    "altitude_m": 831,
+    "ground_speed": 10,
+    "aircraft_code": "BALL",
+    "distance_km": 456.5,
+    "timestamp": "2026-10-16T08:38:37.532017+00:00",
+    "date": "2026-10-16"
   }
 ]
