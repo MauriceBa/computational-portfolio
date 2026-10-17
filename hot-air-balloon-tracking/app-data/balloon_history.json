@@ -450658,5 +450658,19 @@
     "distance_km": 560.2,
     "timestamp": "2026-10-16T13:39:30.514083+00:00",
     "date": "2026-10-16"
+  },
+  {
+    "id": "42293d7a",
+    "callsign": "SPBWE",
+    "registration": "SP-BWE",
+    "lat": 50.0463,
+    "lon": 19.9362,
+    "altitude": 935,
+    "altitude_m": 285,
+    "ground_speed": 1,
+    "aircraft_code": "BALL",
+    "distance_km": 982.7,
+    "timestamp": "2026-10-17T13:23:20.810820+00:00",
+    "date": "2026-10-17"
   }
 ]
