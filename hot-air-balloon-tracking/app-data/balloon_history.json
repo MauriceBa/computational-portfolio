@@ -450672,5 +450672,33 @@
     "distance_km": 982.7,
     "timestamp": "2026-10-17T13:23:20.810820+00:00",
     "date": "2026-10-17"
+  },
+  {
+    "id": "422c6908",
+    "callsign": "PHPQR",
+    "registration": "PH-PQR",
+    "lat": 47.2146,
+    "lon": 15.8519,
+    "altitude": 3850,
+    "altitude_m": 1173,
+    "ground_speed": 10,
+    "aircraft_code": "BALL",
+    "distance_km": 813.3,
+    "timestamp": "2026-10-18T14:45:15.422359+00:00",
+    "date": "2026-10-18"
+  },
+  {
+    "id": "422cbe5a",
+    "callsign": "SPBWE",
+    "registration": "SP-BWE",
+    "lat": 50.0457,
+    "lon": 19.9361,
+    "altitude": 804,
+    "altitude_m": 245,
+    "ground_speed": 3,
+    "aircraft_code": "BALL",
+    "distance_km": 982.7,
+    "timestamp": "2026-10-18T14:45:15.422359+00:00",
+    "date": "2026-10-18"
   }
 ]
