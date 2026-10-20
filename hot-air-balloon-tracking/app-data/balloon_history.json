@@ -450714,5 +450714,19 @@
     "distance_km": 982.6,
     "timestamp": "2026-10-19T17:37:30.012379+00:00",
     "date": "2026-10-19"
+  },
+  {
+    "id": "42356faa",
+    "callsign": "HBQDW",
+    "registration": "HB-QDW",
+    "lat": 47.252,
+    "lon": 7.988,
+    "altitude": 3350,
+    "altitude_m": 1021,
+    "ground_speed": 4,
+    "aircraft_code": "BALL",
+    "distance_km": 414.8,
+    "timestamp": "2026-10-20T15:30:33.017515+00:00",
+    "date": "2026-10-20"
   }
 ]
