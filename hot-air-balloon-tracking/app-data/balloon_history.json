@@ -450770,5 +450770,19 @@
     "distance_km": 504.6,
     "timestamp": "2026-10-25T09:58:12.070115+00:00",
     "date": "2026-10-25"
+  },
+  {
+    "id": "424f1e30",
+    "callsign": "DOTRM",
+    "registration": "D-OTRM",
+    "lat": 46.287,
+    "lon": 11.815,
+    "altitude": 13700,
+    "altitude_m": 4176,
+    "ground_speed": 20,
+    "aircraft_code": "BALL",
+    "distance_km": 652.2,
+    "timestamp": "2026-10-27T07:07:13.608209+00:00",
+    "date": "2026-10-27"
   }
 ]
