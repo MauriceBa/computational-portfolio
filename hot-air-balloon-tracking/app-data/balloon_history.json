@@ -450826,5 +450826,19 @@
     "distance_km": 505.0,
     "timestamp": "2026-10-28T01:56:34.597812+00:00",
     "date": "2026-10-28"
+  },
+  {
+    "id": "42543b3a",
+    "callsign": "DOKLD",
+    "registration": "D-OKLD",
+    "lat": 52.254,
+    "lon": 8.67,
+    "altitude": 1700,
+    "altitude_m": 518,
+    "ground_speed": 10,
+    "aircraft_code": "BALL",
+    "distance_km": 242.7,
+    "timestamp": "2026-10-28T14:43:46.509821+00:00",
+    "date": "2026-10-28"
   }
 ]
